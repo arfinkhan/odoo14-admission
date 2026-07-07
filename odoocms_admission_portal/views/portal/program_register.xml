@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!--
+        Standalone "browse open programs" page (/program/register/).
+        The dashboard already has an inline "Apply for a New Program"
+        section; this page is a dedicated view of the same list for
+        candidates who navigate here directly.
+    -->
+    <template id="program_register_list" name="Open Programs">
+        <link rel="stylesheet" type="text/css" href="/odoocms_admission_portal/static/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/odoocms_admission_portal/static/fontawesome/css/all.css"/>
+
+        <nav style=" box-shadow: #808080 0px 25px 20px -20px;" class="navbar sticky-top bg-light">
+            <div class="container-fluid">
+                <a style="color:#00008B" class="navbar-brand" href="/admission/dashboard/">
+                    <img t-att-src="image_data_uri(company.logo)" alt="Logo" width="40" height="34" class="d-inline-block align-text-top"/>
+                    <t t-esc="company.name"/>
+                </a>
+                <div class="d-flex align-items-center">
+                    <a href="/admission/dashboard/" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container my-4">
+            <h3 class="mb-4">Programs Open for Application</h3>
+            <t t-if="not open_registers">
+                <p class="text-muted">
+                    There are no programs currently open for application. Please check back later.
+                </p>
+            </t>
+            <div class="row">
+                <t t-foreach="open_registers" t-as="register">
+                    <div class="col-md-4 mb-3">
+                        <div class="border rounded p-3 h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <h5>
+                                    <t t-esc="register.name"/>
+                                </h5>
+                                <p class="text-muted mb-1">
+                                    <t t-esc="register.career_id.name"/>
+                                </p>
+                                <p class="small text-muted">
+                                    Applications close on
+                                    <t t-esc="register.date_end"/>
+                                </p>
+                            </div>
+                            <form t-attf-action="/program/register/apply" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="register_id" t-att-value="register.id"/>
+                                <button type="submit" class="btn btn-primary w-100">Apply Now</button>
+                            </form>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </template>
+</odoo>

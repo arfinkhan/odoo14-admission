@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data>
+
+  <!-- Email 1: Student is eligible for interview -->
+  <record id="mail_template_interview_eligible" model="mail.template">
+    <field name="name">Admission - Interview Eligibility Notification</field>
+    <field name="model_id" ref="odoocms_admission.model_odoocms_application"/>
+    <field name="subject">Interview Eligibility - ${object.company_id.name}</field>
+    <field name="email_from">"${object.company_id.name|safe}"
+        <${(object.company_id.admission_mail or user.email)|safe}></field>
+    <field name="email_to">"${object.application_no|safe}"
+        <${(object.email)|safe}></field>
+    <field name="body_html" type="html">
+      Dear ${object.name},<br/><br/>
+      You are <strong>eligible for an interview</strong>. Please contact
+      the Admission Office for your interview schedule.<br/><br/>
+      <em>Fee voucher download is enabled only after passing the interview.</em>
+    </field>
+  </record>
+
+  <!-- Email 2: Student passed interview — voucher unlocked -->
+  <record id="mail_template_interview_passed" model="mail.template">
+    <field name="name">Admission - Interview Passed / Voucher Enabled</field>
+    <field name="model_id" ref="odoocms_admission.model_odoocms_application"/>
+    <field name="subject">Interview Passed — Proceed to Voucher | ${object.company_id.name}</field>
+    <field name="email_from">"${object.company_id.name|safe}"
+        <${(object.company_id.admission_mail or user.email)|safe}></field>
+    <field name="email_to">"${object.application_no|safe}"
+        <${(object.email)|safe}></field>
+    <field name="body_html" type="html">
+      Dear ${object.name},<br/><br/>
+      Congratulations! You have <strong>passed your interview</strong>.
+      Please log in to the admission portal and go to the
+      <strong>Voucher Details</strong> tab to download your fee voucher.
+    </field>
+  </record>
+
+</data></odoo>

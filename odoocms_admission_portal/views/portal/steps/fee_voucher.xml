@@ -1,0 +1,344 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <template id="fee_voucher" name="Fee Voucher Admission">
+       <input type="hidden" id="fee_voucher_state" t-att-value="application_id.fee_voucher_state"/>
+        <div class="ml-3 mr-3 header_tab diable_header_tab mt-0 p-2" onclick="$('#fee_voucher_div').slideToggle(1000); $('#fee_voucher_dropdpown').toggleClass('fa-angle-down fa-angle-up');">
+            <a class="btn btn-link"><i style="color: white;font-size: 25px;" class="fa-solid fa-money-check-dollar float-left"/><h2 style="color:white" class="float-left">   <t t-esc="step.name"/></h2></a>
+            <a><i id="fee_voucher_dropdpown" class="fas fa-angle-down float-right p-0 m-0" style="font-size: 40px; cursor: pointer;color: white"/></a>
+        </div>
+        <div id="fee_voucher_div" class="row container-fluid mt-3 ">
+         <!--   <div id="fee_voucher_div" class="row container-fluid mt-3 collapse_div">-->
+            <!-- <t t-if="fee_voucher_state==verify">
+                <label style='color:red'>Fee Verified</label>
+            </t> -->
+            <!--<div t-attf-style="{{'display:none' if application_id.state == 'no' else '' }}" class="mb-1 col-md-8">-->
+                <a id="fee_button">
+                    <button role="button" class="btn btn-outline-success float-right"><i class="fa fa-download"/> Get Fee Voucher</button>
+                </a>
+            <!--</div>-->
+            <br/>
+            <t t-if="application_id.fee_voucher_state != 'verify'">
+                <div class="col-8">
+                    <form id="fee_voucher_form" class="row g-3">
+                        <input type="hidden" name="step_name" value="fee_voucher"/>
+                        <input type="hidden" id="step_no_voucher" name="step_no" t-att-value="counter_step"/>
+                        <!--<div class="row">
+                           <div class="mb-1 mt-3 col-md-12">
+                               <h2 style="background-color:lightgrey; padding:1%;"><span><b>A)</b> Payment through 1Link (1Bill)</span></h2>
+                               Candidates can pay their application processing fee through 1link invoice by using following payment modes.
+                               <ul>
+                                   <li>1) Mobile App/Online Banking(Any Bank)</li>
+                                   <li>2) ATM(Any Bank)</li>
+                                   <li>3) Easy Paisa/JazzCash etc.</li> <a target="_blank" style="color:red;" href="https://youtu.be/WjTMBWmWULs">How, to pay online</a>
+                               </ul>
+                               Use this consumer# / 1Bill Invoice# to pay through 1Link service: <b>1001145021</b><b t-esc="application_id.application_no"/>
+                               <hr/>
+                              <b style="color:red"> Note:- If you pay the registration fee through 1 Bill invoice using consumer number, please refresh the page to proceed to next step. </b>
+
+                               <h2 style="background-color:lightgrey; padding:1%;"><span><b>B)</b> Payment through Fee Invoice</span></h2>
+                            </div>
+
+                        </div>-->
+                        <h2 style="background-color:lightgrey; padding:1%;"><span><b>A)</b> Payment through Fee Invoice</span></h2>
+                        <div class="row">
+                            <div class="mb-1 mt-3 col-md-4 ">
+                                <img t-att-src="image_data_uri(application_id.voucher_image) if application_id.voucher_image else '/odoocms_admission_portal/static/img/upload2.jpg'" id="fee_voucher_preview" onclick="document.getElementById('fee_voucher_image').click()" class="img-thumbnail" alt="..."/>
+                                <input required="1" style="display:None" id="fee_voucher_image" onChange="image_preview_func(this)" type="file"/>
+                                <label class="form-label" for="field_name">Upload Invoice</label>
+                            </div>
+                            <br/>
+                            <div class="mb-1 col-md-7 mt-3">
+                                <div class="mb-5 col-md-12">
+                                    <input required="True" t-att-value="application_id.application_no" class="form-control" type="number" name="voucher_number" id="voucher_number"/>
+                                    <label for="voucher_number" class="floating-label">Consumer/Challan Number*</label>
+                                </div>
+
+                                <div class="mb-1 col-md-12">
+                                    <input class="form-control inputText" t-att-value="application_id.voucher_date" type="date" name="deposit_date" id="deposit_date"/>
+                                    <span class="floating-label" for="deposit_date">Deposit Date</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 ">
+                            <input type="submit" class="btn btn-primary float-right"/>
+                        </div>
+                    </form>
+                    <button onclick="check_form_validation(this)" t-attf-style="border:none;{{'display:none' if application_id.state != 'draft' else '' }}" class="btn btn-primary ml-1 float-right">Update</button>
+
+                </div>
+
+
+                <!-- challan -->
+                <div class="col-4 border">
+                   <!-- <div id='fee_voucher_challan' t-attf-style="{{'display:none' if fee_voucher_state =='no' else 'display:block'}};{{'pointer-events:none' if fee_voucher_state =='verify' else ''}}" class="container">-->
+                    <div id="fee_voucher_challan" class="container">
+
+                        <div class="row">
+                            <div class="col col-2">
+                                <img alt="..." style="max-width:40px" t-att-src="image_data_uri(company.logo)" t-if="company.logo"/>
+                                <img alt="..." style="max-width:40px" src="/web/static/src/img/user_menu_avatar.png"/>
+                            </div>
+                            <div class="col col-10">
+                                <div class="row">
+                                    <div class="col col-12" style="text-align:center; font-weight:bold; text-decoration:underline">
+                                        <span> FEE Voucher</span>
+                                        <br/>
+                                        <span>Application Processing Fee</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col col-12">
+                                        <span style="font-weight:bold">Payable at:</span>
+                                        <span id="account_payable"
+                                              t-esc="application_id.register_id.bank_name or bank_name or ''"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col col-12">
+                                        <span style="font-weight:bold">Account Title:</span>
+                                        <span id="account_title"
+                                              t-esc="application_id.register_id.account_title or account_title or ''"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col col-12">
+                                        <span style="font-weight:bold">Account No:</span>
+                                        <span id="account_no"
+                                              t-esc="application_id.register_id.account_no or account_no or ''"/>
+                                    </div>
+                                </div>
+                                <div class="row" t-if="application_id.register_id.iban_no">
+                                    <div class="col col-12">
+                                        <span style="font-weight:bold">IBAN:</span>
+                                        <span t-esc="application_id.register_id.iban_no"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>Voucher No</span>
+                            </div>
+                            <div class="col col-7" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span t-esc="application_id.application_no"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>Issue Date</span>
+                            </div>
+                            <div class="col col-8" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span t-esc="today"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>Session</span>
+                            </div>
+                            <div class="col col-8" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span t-esc="application_id.register_id.term_id.name" t-if="application_id.register_id.term_id"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>Applicant Name</span>
+                            </div>
+                            <div class="col col-8" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span t-esc="name"/>
+                                    <span id="student_name_voucher"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>Father Name</span>
+                            </div>
+                            <div class="col col-8" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span id="father_name_voucher"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>CNIC</span>
+                            </div>
+                            <div class="col col-8" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span id="voucher_cnic"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>Program</span>
+                            </div>
+                            <div class="col col-8" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span t-esc="application_id.register_id.career_id.name"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-12" style="text-align:center; font-weight:bold; padding:15px;">
+                                <span>Application Processing Fee</span>
+                            </div>
+                        </div>
+                        <!--<div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>Registration Fee</span>
+                            </div>
+                            <div class="col col-8" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span t-esc="application_id.amount" t-if="application_id.amount"/>
+                                </div>
+                            </div>
+                        </div>-->
+                        <!--<div class="row">
+                            <div class="col col-4" style="font-weight:bold">
+                                <span>Application Fee</span>
+                            </div>
+                            <div class="col col-8" style="text-align:center">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    <span t-esc="application_id.amount" t-if="application_id.amount"/>
+                                </div>
+                            </div>
+                        </div>-->
+                        <div class="row">
+                            <div class="col col-12">
+                                <table id="">
+                                <t t-set="is_international" t-value="application_id.is_dual_nationality or application_id.overseas or application_id.nationality.id != 177"/>
+                                <t t-set="reg_fee_intl" t-value="application_id.register_id.registration_fee_international"/>
+                                <t t-set="add_fee_intl" t-value="application_id.register_id.additional_fee_international"/>
+                                <t t-if="is_international">
+                                    <t t-set="total_fee" t-value="reg_fee_intl + add_fee_intl"/>
+                                    <tr>
+                                        <th>Registration Fee : </th>
+                                        <td>
+                                         <span t-esc="reg_fee_intl"/> $
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tuition Fee : </th>
+                                        <td>
+                                          <span t-esc="add_fee_intl"/> $
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Fee : </th>
+                                        <td>
+                                          <span t-esc="total_fee"/> $
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Amount in Words</th>
+                                        <td id="">
+                                        <span t-esc="application_id.amount_to_text(float(total_fee))"/> US Dollars Only
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="total_fee"  t-value="application_id.register_id.registration_fee + application_id.register_id.additional_fee"/>
+                                    <tr>
+                                        <th>Registration Fee : </th>
+                                        <td>
+                                         <span t-esc="application_id.register_id.registration_fee"/>       
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tuition Fee : </th>
+                                        <td>
+                                          <span t-esc="application_id.register_id.additional_fee"/> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Fee : </th>
+                                        <td>
+                                          <span t-esc="total_fee"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Amount in Words</th>
+                                        <td id="">
+                                        <span t-esc="application_id.amount_to_text(float(total_fee))"/>Rs Only
+                                        </td>
+                                    </tr>
+                                </t>
+                                    <tr>
+                                        <th>Mode of Payment</th>
+                                        <td>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Depositer's Name:</th>
+                                        <td/>
+                                    </tr>
+                                    <tr>
+                                        <th>Depositer's CNIC:</th>
+                                        <td/>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px">
+                            <div class="col col-12">
+                                <p style="font-weight:bold">Payment Terms.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-12">
+                                <p>In case of any fee related issue please contact Admission Office.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-12">
+                                <p>Note: This is computer generated document and need no signature.</p>
+                            </div>
+                        </div>
+                        <div class="row" style="padding:10px;">
+                            <div class="col col-12" style="text-align:center; font-weight:bold">
+                                <!-- <span t-esc="copy_name"/> -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-12">
+                                <!-- <span>Payable at</span>&#160;<t t-esc="account_payable" t-if="account_payable"/> &amp; <t t-esc="account_payable2" t-if="account_payable2"/> -->
+                            </div>
+                        </div>
+                        <a href="/download/admission/slip/" target="_blank">
+                            <button id="admission_slip_prepare" style="background-color:#875A7B;border:None" class="btn btn-primary ">
+                                <i class="fa fa-download"/> Download</button>
+                        </a>
+                    </div>
+                </div>
+
+            </t>
+            <t t-if="application_id.fee_voucher_state== 'verify'">
+                <h3>Your Fee payment has been verified and Admission Approved. For further detail keep visiting University Website. https://nutech.edu.pk/online-registration/</h3>
+                <!--<div class="col-6">
+                    <input type="hidden" id="step_no_voucher_skip" name="step_no" t-att-value="counter_step"/>
+                    <button id="fee_voucher_skip" style="background-color:#875A7B;border:None" class="btn btn-primary float-left">Skip</button>
+                </div>-->
+
+            </t>
+            <t t-if="application_id.fee_voucher_state== 'upload'">
+                <h3 style="color:red;">Your Fee is not verified yet.</h3>
+
+            </t>
+            <t t-if="application_id.fee_voucher_state== 'unverify'">
+                <h3 style="color:red;">Your Fee is rejected/unverified.</h3>
+
+            </t>
+        </div>
+        <br/>
+  </template>
+</odoo>

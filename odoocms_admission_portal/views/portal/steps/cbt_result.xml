@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <template id="cbt_result" name="Nutech CBT Result">
+
+        <!-- Second Page Contact   -->
+        <!-- <div class='container-fluid mb-3'> -->
+        <div class="ml-3 mr-3 header_tab diable_header_tab mt-0 p-2"
+             onclick="$('#cbtresultcollapse').slideToggle(1000); $('#quota_dropdown').toggleClass('fa-angle-down fa-angle-up');">
+            <a class="btn btn-link">
+                <i style='color: white;font-size: 25px;' class="fa-solid fa-address-card float-left"></i>
+                <h2 style='color:white' class="float-left">&#160;&#160;<t t-esc="step.name"/>
+                </h2>
+            </a>
+            <a>
+                <i id='quota_dropdown' class="fas fa-angle-down float-right p-0 m-0"
+                   style="font-size: 40px; cursor: pointer;color: white"></i>
+            </a>
+        </div>
+
+        <div id="cbtresultcollapse" class="row container-fluid mt-3 collapse_div">
+            <br/>
+
+            <div class='col-8'>
+
+                <form id='quota_form' class="row g-3">
+                    <input type="hidden" name="step_no" t-att-value='counter_step'/>
+                    <!--<input type='hidden' name='step_name' value='scholarship'/>-->
+                    <input type='hidden' name='step_name' value='cbt_result'/>
+
+
+                    <!-- geting email ,home phone and mobile  -->
+                    <div class="mb-1 col-md-12 ml-2 mb-0 text-center">
+                        <h4 class='mt-3 mb-0'>Computer Based Test-Result</h4>
+                        <hr class='mt-0 mb-0'></hr>
+                    </div>
+                    <div class="mb-1 col-md-12 pb-2 mt-2">
+                        <table id='education_table' class="table table-md table-hover">
+                            <thead>
+                                <tr>
+                                    <th class='col-auto' scope="col">Name</th>
+                                    <th class='col-auto' scope="col">CNIC</th>
+                                    <th class='col-auto' scope="col">Session</th>
+                                    <th class='col-auto' scope="col">Discipline</th>
+                                    <th class='col-auto' scope="col">Obtained Marks/Score</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id='result_table_body'>
+                                <t t-if="cbt_result">
+                                    <t t-foreach="cbt_result" t-as="result">
+                                        <tr t-att-id='result.id'>
+                                            <td class='col-auto'>
+                                                <t t-esc="result.name"/>
+
+                                            </td>
+                                            <td class='col-auto'>
+                                                    <t t-esc="result.cnic"/>
+                                            </td>
+                                            <td class='col-auto'>
+                                                 <t t-esc="result.session"/>
+                                            </td>
+                                            <td class='col-auto'>
+                                                    <t t-esc="result.discipline"/>
+                                            </td>
+                                             <td class='col-auto'>
+                                                    <t t-esc="result.total_score"/>
+                                            </td>
+
+                                        </tr>
+                                    </t>
+                                </t>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </form>
+                <button onclick="check_form_validation(this)"
+                        t-attf-style="border:None; {{'display:none' if application_id.state != 'draft' else '' }}"
+                        class="btn btn-primary ml-1">Skip
+                </button>
+            </div>
+            <div class='col-4'>
+
+            </div>
+        </div>
+        <br/>
+
+        <!-- </div> -->
+    </template>
+</odoo>

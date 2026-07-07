@@ -1,0 +1,319 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!--<template id="cbt_results" name="CBT Results">
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"/>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css"/>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+        <script>
+            $(document).ready( function () {
+
+                $('#merit_table').find('table').each(function(index,elem){
+                    $(elem).DataTable();
+                })
+
+              $('#merit_table').children('div').each(function(index,elem){
+                $(elem).hide()
+              })
+
+              $('#merit_list_select').on('change',function(){
+                merit_list=$('#merit_list_select').val()
+                $('#merit_table').children('div').hide()
+                $('#merit_table').find('#' + merit_list).show()
+                
+            })
+          
+
+
+
+            } );
+
+        </script>
+        &lt;!&ndash;<nav style='background-color:#875a7b' class="navbar navbar-light">
+            <div class="container-fluid">
+                <a class="navbar-brand">
+                    <t t-esc="company"/>
+                </a>
+                <form class="d-flex">
+                    
+                    <select class="form-control " id="merit_list_select" name="merit_list_select">
+                        <option disabled='1' selected='1' value=''>Select Merit List</option>
+                        <t t-foreach="merit_register" t-as="merit">
+                            <option t-att-value='merit.name' >
+                                <t t-esc="merit.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </form>
+            </div>
+        </nav>&ndash;&gt;
+        <div class="mb-1 col-md-12 ml-2 mb-0 text-center">
+                        <h3 class='mt-3 mb-0'><t t-esc="application_id.register_id.name"/></h3>
+                        <hr class='mt-0 mb-0'></hr>
+                        <h4 class='mt-3 mb-0'> Computer Based Test-Result</h4>
+                        <h6><t t-esc="cbt_result.test_series"/></h6>
+
+                    </div>
+                    <div class="mb-1 col-md-12 pb-2 mt-2">
+                        <table id='education_table' class="table table-md table-hover">
+                            <thead>
+                                <tr>
+                                    <th class='col-auto' scope="col">Name</th>
+                                    <th class='col-auto' scope="col">CNIC</th>
+                                    <th class='col-auto' scope="col">Session</th>
+                                    <th class='col-auto' scope="col">Discipline</th>
+                                    <th class='col-auto' scope="col">Obtained Marks/Score</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id='result_table_body'>
+                                <t t-if="cbt_result">
+                                    <t t-foreach="cbt_result" t-as="result">
+                                        <tr t-att-id='result.id'>
+                                            <td class='col-auto'>
+                                                <t t-esc="result.name"/>
+
+                                            </td>
+                                            <td class='col-auto'>
+                                                    <t t-esc="result.cnic"/>
+                                            </td>
+                                            <td class='col-auto'>
+                                                 <t t-esc="result.session"/>
+                                            </td>
+                                            <td class='col-auto'>
+                                                    <t t-esc="result.discipline"/>
+                                            </td>
+                                             <td class='col-auto'>
+                                                    <t t-esc="result.total_score"/>
+                                            </td>
+
+                                        </tr>
+                                    </t>
+                                </t>
+
+                            </tbody>
+                        </table>
+                    </div>
+      &lt;!&ndash;  <div id='merit_table' class="container my-5">
+            <t t-foreach="merit_register" t-as="merit">
+                <div t-att-id='merit.name'>
+
+                    <table t-att-id="merit.id" class="table table-striped table-bordered">
+                        <thead>
+                            <tr style='background-color:#c57bb1'>
+                                <th>Application No</th>
+                                <th>Name</th>
+                                <th>Program</th>
+                                <th>Merit No</th>
+                                <th>Aggregate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            &lt;!&ndash; <t t-esc="merit"/> &ndash;&gt;
+                            <t t-foreach="merit.merit_register_ids" t-as="m">
+                                <t t-if="m.public_visible">
+
+                                    <td></td>
+                                    <tr>
+                                        <td><t t-esc="m.applicant_id.application_no"/></td>
+                                        <td><t t-esc="m.applicant_id.first_name if m.applicant_id.first_name else ''"/> <t t-esc="m.applicant_id.last_name if m.applicant_id.last_name else ''"/></td>
+                                        <td><t t-esc="program_id.name if m.program_id else ''"/></td>
+                                        <td><t t-esc="m.merit_no if m.merit_no else ''"/></td>
+                                        <td><t t-esc="m.aggregate if m.aggregate else ''"/></td>
+                                    </tr>
+                                </t>
+                            </t>
+
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+
+        </div>&ndash;&gt;
+
+    </template>-->
+    <template id="cbt_results" name="CBT Results">
+        <!--<t t-call="website.layout">-->
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+                <div id='application_update_alert' class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div style='color:white' class="toast-header">
+                        <i class="fas fa-bell"></i>
+                        <strong class="mr-auto ml-1">Alert</strong>
+                        <small style='color:white;' class="text-muted">Just now</small>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        </button>
+                    </div>
+                    <div id='toast_body_alert' class="toast-body">
+                    </div>
+                </div>
+            </div>
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="html_data" t-value="{'style': 'height: 100%;'}"/>
+            <t t-set="no_footer" t-value="True"/>
+            <link rel="stylesheet" type="text/css"
+                  href="/odoocms_admission_portal/static/bootstrap/css/bootstrap.min.css"/>
+            <link rel="stylesheet" type="text/css" href="/odoocms_admission_portal/static/fontawesome/css/all.css"/>
+            <link rel="stylesheet" type="text/css"
+                  href="/odoocms_admission_portal/static/css/admission_application.css"/>
+            <link rel="stylesheet" href="/odoocms_admission_portal/static/css/jquery-ui.theme.css"></link>
+            <link rel="stylesheet" href="/odoocms_admission_portal/static/css/jquery-ui.min.css"></link>
+            <script type="text/javascript" src="/odoocms_admission_portal/static/js/jquery.min.js"></script>
+            <script type="text/javascript" src="/odoocms_admission_portal/static/js/jquery-ui.min.js"></script>
+            <script type="text/javascript" src="/odoocms_admission_portal/static/js/jquery-mask.js"></script>
+            <script type="text/javascript" src="/odoocms_admission_portal/static/js/popper.min.js"></script>
+            <script type="text/javascript" src="/odoocms_admission_portal/static/bootstrap/js/bootstrap.min.js"></script>
+            <!-- <script type="text/javascript" src="/odoocms_admission_portal/static/fontawesome/js/all.min.js"></script> -->
+            <link rel="stylesheet" type="text/css" href="/odoocms_admission_portal/static/css/choices.css"/>
+            <script type="text/javascript" src="/odoocms_admission_portal/static/js/choices.js"></script>
+
+
+            <!-- all the website content should inside this div -->
+
+            <script>
+                $(document).ready(function () {
+                $('#dashboard_button').children('div').css({'background-color':'#572a4a'})
+                $('#application_update_alert').children('div').css({'background-color':'#572a4a'})
+                $('button').css({'background-color': '#572a4a'});
+
+
+                $('#dashboard_button').css('cursor', 'pointer');
+                $('#dashboard_button').on('click', function () {
+                let confirmAction = confirm("Are you sure to Logout?");
+                if (confirmAction) {
+                lca = '/web/session/logout?redirect=/web/signin/';
+                window.location.replace(lca)
+                }
+                })
+
+                $('#alert_show_button').on('click', function (e) {
+                $('#application_update_alert').toast({
+                delay: 4000,
+                })
+                $('#application_update_alert').toast('show')
+                })
+
+                $('#myToast').toast('show');
+                $('#myToast').toast({
+                autohide: false,
+                delay: 10000,
+                })
+                $('#logout_toast').toast('show');
+                $('#logout_toast').toast({
+                autohide: false,
+                delay: 10000,
+                })
+                });
+            </script>
+
+            <div style='z-index:12' class="toast toast-container position-fixed float-right " id="myToast"
+                 data-bs-autohide="false">
+                <div style='color:white;background-color:#572a4a' class="toast-header">
+                    <strong class="me-auto">
+                        <i class="bi-gift-fill"></i>
+                        Application No/Login ID :
+                        <t t-esc="application_id.application_no"/>
+                        <br/>
+                        Password :
+                        <t t-esc="application_id.password"/>
+                        <br/>
+
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <link rel="stylesheet" href="/odoocms_admission_portal/static/css/loader.css"></link>
+
+
+            <!-- <div style='display:none' class="ring1"> </div> -->
+            <!-- <div class="ring2"> </div> -->
+
+
+            <button id='alert_show_button' style='display: none' class='btn btn-primary'></button>
+            <div id='main_div' style='display:contents'>
+
+                <!-- carousel -->
+                <input id='application_step' type='hidden' t-att-value='application_id.step_no'></input>
+                <input id='application_state' type='hidden' t-att-value='application_id.state'></input>
+
+                <div id='page_loader' class="loading"></div>
+
+                <t t-call="odoocms_admission_portal.register_header"/>
+
+                <!--<t t-call="odoocms_admission_portal.register_progress"/>-->
+
+                <div class="mb-1 col-md-12 ml-2 mb-0 text-center">
+
+                    <hr class='mt-0 mb-0'></hr>
+                    <h4 class='mt-3 mb-0'>Computer Based Test-Result</h4>
+                    <h6>
+                        <t t-esc="cbt_result.test_series"/>
+                    </h6>
+
+                </div>
+                <div class="mb-1 col-md-12 pb-2 mt-2">
+                    <table id='education_table' class="table table-md table-hover">
+                        <thead>
+                            <tr>
+                                <th class='col-auto' scope="col">Name</th>
+                                <th class='col-auto' scope="col">CNIC</th>
+                                <th class='col-auto' scope="col">Session</th>
+                                <th class='col-auto' scope="col">Discipline</th>
+                                <th class='col-auto' scope="col">Obtained Marks/Score</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id='result_table_body'>
+                            <t t-if="cbt_result">
+                                <t t-foreach="cbt_result" t-as="result">
+                                    <tr t-att-id='result.id'>
+                                        <td class='col-auto'>
+                                            <t t-esc="result.name"/>
+
+                                        </td>
+                                        <td class='col-auto'>
+                                            <t t-esc="result.cnic"/>
+                                        </td>
+                                        <td class='col-auto'>
+                                            <t t-esc="result.session"/>
+                                        </td>
+                                        <td class='col-auto'>
+                                            <t t-esc="result.discipline"/>
+                                        </td>
+                                        <td class='col-auto'>
+                                            <t t-esc="result.total_score"/>
+                                        </td>
+
+                                    </tr>
+                                </t>
+                            </t>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <!-- message popup -->
+           <!-- <div id='message_popup' class="modal message_popup" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Message!</h5>
+                            <button id='close_popup_message' type="button" class="btn-close"
+                                    data-bs-dismiss="message_popup" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p style='color:green' id='message_popup_text'></p>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+
+
+        <!--</t>-->
+        <script type="text/javascript" src="/odoocms_admission_portal/static/js/admission_application.js"></script>
+    </template>
+</odoo>

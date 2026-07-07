@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="odoocms_program_inherit" model="ir.ui.view">
+        <field name="name">odoocms.application.form.inherit</field>
+        <field name="model">odoocms.application</field>
+        <field name="inherit_id" ref="odoocms_admission.view_odoocms_application_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='voucher_details']" position="after">
+               <page name="test_center" string="Test Center">
+                            <group>
+                                <group>
+                                    <field name="center_id"/>
+                                </group>
+                                <group>
+                                    <field name="slot_ids" widget="many2many_tags"/>
+                                </group>
+                                <group>
+                                    <field name="confirm_test_center"/>
+                                </group>
+                            </group>
+                        </page>
+            </xpath>
+
+        </field>
+    </record>
+  <!--  <record id="odoocms_register_inherit" model="ir.ui.view">
+        <field name="name">odoocms.program.inherit</field>
+        <field name="model">odoocms.program</field>
+        <field name="inherit_id" ref="odoocms_base.view_odoocms_program_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group/field[@name='code']" position="after">
+                <field name="offering"/>
+                &lt;!&ndash;<field name="payment"/>&ndash;&gt;
+                <field name="entry_test"/>
+                <field name="interview"/>
+                <field name="offer_letter"/>
+                <field name="date"/>
+            </xpath>
+            &lt;!&ndash;<xpath expr="//page[@name='rooms']" position="after">
+                <page name="offer_description" string="Offer Letter Setup">
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </page>
+                <page name="admit_card" string="Admit Card Setup">
+                    <group>
+                        <field name="test_admit_card"/>
+                    </group>
+                </page>
+                <page name="interview_letter" string="Interview Letter Setup">
+                    <group>
+                        <field name="interview_card_setup"/>
+                    </group>
+                </page>
+            </xpath>&ndash;&gt;
+        </field>
+    </record>
+    <record id="admission_register_inherit" model="ir.ui.view">
+        <field name="name">admission.inherit.register</field>
+        <field name="model">odoocms.admission.register</field>
+        <field name="inherit_id" ref="odoocms_admission.view_odoocms_admission_register_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='eligibility_criteria_image']" position="after">
+                <field name="prospectus_fee_due_date"/>
+            </xpath>
+            <xpath expr="//page/field/tree/field[@name='duration']" position="after">
+                <field name="offering"/>
+                &lt;!&ndash;<field name="payment"/>&ndash;&gt;
+                <field name="entry_test"/>
+                <field name="interview"/>
+                <field name="offer_letter"/>
+            </xpath>
+        </field>
+    </record>-->
+</odoo>

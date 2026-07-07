@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!--
+        Candidate portal dashboard.
+
+        Shown only to signed-in candidates (portal users), never to
+        backend/admin users - the controller redirects internal users to
+        /web before this template is ever rendered.
+
+        Sections:
+          1. Applicant identity header (name / logout)
+          2. "My Applications" - full history of every program/register
+             this candidate has ever applied for, with current status and
+             a Continue/View action per application.
+          3. "Apply for a New Program" - any admission register currently
+             open that the candidate hasn't already applied to.
+    -->
+    <template id="admission_student_dashboard" name="Admission Dashboard">
+        <link rel="stylesheet" type="text/css" href="/odoocms_admission_portal/static/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/odoocms_admission_portal/static/fontawesome/css/all.css"/>
+        <script type="text/javascript" src="/odoocms_admission_portal/static/js/jquery.min.js"/>
+        <script type="text/javascript" src="/odoocms_admission_portal/static/js/popper.min.js"/>
+        <script type="text/javascript" src="/odoocms_admission_portal/static/bootstrap/js/bootstrap.min.js"/>
+        <script type="text/javascript" src="/odoocms_admission_portal/static/js/dashboard.js"/>
+
+        <style>
+            #logout_button_dashboard:hover{
+                background-color:#CB3B38;
+                color:white;
+                box-shadow: #CB3B38 0px 48px 100px 0px;
+            }
+            body{
+                background-color:#f2f2f2;
+            }
+            .btn-apply {
+                background-color: #E2E3E8;
+                border-radius: 100px;
+                box-shadow: #CB3B38 0px 5px 10px;
+                color: brown;
+                cursor: pointer;
+                padding: 6px 18px;
+                border: 0;
+                font-size: 16px;
+            }
+            .btn-apply:hover{
+                box-shadow: #CB3B38 0px 5px 15px;
+                background-color:#CB3B38;
+                color: white;
+            }
+            .card-header{
+                box-shadow: #E2E3E8 2px 3px 2px 2px;
+            }
+            .status-badge {
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 12px;
+                text-transform: uppercase;
+                color: white;
+            }
+            .status-draft { background-color: #6c757d; }
+            .status-confirm, .status-submit, .status-verification { background-color: #f0ad4e; }
+            .status-verified, .status-approve, .status-open, .status-done { background-color: #5cb85c; }
+            .status-reject { background-color: #d9534f; }
+        </style>
+
+        <nav style=" box-shadow: #808080 0px 25px 20px -20px;" class="navbar sticky-top bg-light">
+            <div class="container-fluid">
+                <a style="color:#00008B" class="navbar-brand" href="#">
+                    <img t-att-src="image_data_uri(company.logo)" alt="Logo" width="40" height="34" class="d-inline-block align-text-top"/>
+                    <t t-esc="company.name"/>
+                </a>
+                <div class="d-flex align-items-center">
+                    <span>Applicant:</span>
+                    <span class="ml-2" style="color:#CB3B38">
+                        <t t-esc="user.name"/>
+                    </span>
+                    <a id="logout_button_dashboard" href="/web/session/logout?redirect=/web/signin/">
+                        <div class="float-right px-2 py-1 rounded shadow ml-3">
+                            <i class="fa-sharp fa-solid fa-power-off "/>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <br/>
+
+        <!-- My Applications: history + current status -->
+        <div class="card container my-3">
+            <div class="card-header mt-2 text-center">
+                <blockquote class="blockquote mb-0">My Applications</blockquote>
+            </div>
+            <div class="card-body">
+                <t t-if="not applications">
+                    <p class="text-center text-muted">
+                        You have not applied to any program yet. Choose one below to get started.
+                    </p>
+                </t>
+                <t t-if="applications">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Reference No.</th>
+                                <th>Program / Career</th>
+                                <th>Applied On</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="applications" t-as="app">
+                                <tr>
+                                    <td>
+                                        <t t-esc="app.application_no"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="app.register_id.name"/>
+                                        <div class="text-muted small">
+                                            <t t-esc="app.career_id.name"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <t t-esc="app.application_date"/>
+                                    </td>
+                                    <td>
+                                        <span t-attf-class="status-badge status-#{app.state}">
+                                            <t t-esc="app.state"/>
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-if="app.state == 'draft'">
+                                            <a t-attf-href="/admission/application/?application_id=#{app.id}" class="btn btn-sm btn-primary">Continue</a>
+                                        </t>
+                                        <t t-else="">
+                                            <a t-attf-href="/admission/application/?application_id=#{app.id}" class="btn btn-sm btn-outline-secondary">View</a>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+            </div>
+        </div>
+
+        <!-- Apply for a new program -->
+        <div class="card container my-3">
+            <div class="card-header mt-2 text-center">
+                <blockquote class="blockquote mb-0">Apply for a New Program</blockquote>
+            </div>
+            <div class="card-body">
+                <t t-if="not open_registers">
+                    <p class="text-center text-muted">
+                        There are no programs currently open for application. Please check back later.
+                    </p>
+                </t>
+                <t t-if="open_registers">
+                    <div class="row">
+                        <t t-foreach="open_registers" t-as="register">
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3 h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5>
+                                            <t t-esc="register.name"/>
+                                        </h5>
+                                        <p class="text-muted mb-1">
+                                            <t t-esc="register.career_id.name"/>
+                                        </p>
+                                        <p class="small text-muted">
+                                            Applications close on
+                                            <t t-esc="register.date_end"/>
+                                        </p>
+                                    </div>
+                                    <form t-attf-action="/program/register/apply" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <input type="hidden" name="register_id" t-att-value="register.id"/>
+                                        <button type="submit" class="btn-apply w-100">Apply Now</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </div>
+
+        <div class="card container text-center my-3">
+            <div class="card-body">
+                <a target="_blank" href="/admission/eligibility/download" class="mr-3" style="text-decoration: none;">
+                    <button type="button" class="btn btn-outline-primary">Download Eligibility Criteria</button>
+                </a>
+            </div>
+        </div>
+    </template>
+</odoo>
