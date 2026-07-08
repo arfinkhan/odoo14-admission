@@ -161,201 +161,269 @@
                         <!-- <br/> -->
                         <!-- <span id='error_status' style='color:red'>Please Select Status</span> -->
                         <div class="container">
+                            
+                            
                             <form id="add_education_form" method="post">
-                                <input type="hidden" id="update_education_check" value="0"/>
-                                <input type="hidden" id="step_no_edu" name="step_no" t-att-value="counter_step"/>
-                                <input type="hidden" id="step_name_edu" name="step_name" value="education"/>
+    <input type="hidden" id="update_education_check" value="0"/>
+    <input type="hidden" id="step_no_edu" name="step_no" t-att-value="counter_step"/>
+    <input type="hidden" id="step_name_edu" name="step_name" value="education"/>
+    <input type="hidden" id="application_id" t-att-value="application_id.id" name="application_id"/>
 
-                                <div class="row">
-                                    <div class="col-lg-3">
-                                        <input class="form-control " type="hidden" t-att-value="application_id.id" name="application_id" id="application_id"/>
+    <!-- Row 1: Degree Level, Degree, Specializations, Passing Year -->
+    <div class="row">
+        <div class="col-lg-3">
+            <span style="color:black">Degree Level:</span>
+            <div class="form-group">
+                <select class="form-control" required="1" id="degree_level" name="degree_level">
+                    <option value="" disabled="1" selected="1">Select Degree Level</option>
+                    <t t-foreach="academic_data" t-as="degree_level">
+                        <option t-att-code="degree_level.code" t-att-value="degree_level.id">
+                            <t t-esc="degree_level.name"/>
+                        </option>
+                    </t>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <span style="color:black">Degree:</span>
+            <div class="form-group">
+                <select class="form-control" required="1" id="degree_id" name="degree_id">
+                    <option value="0" disabled="1" selected="1">Select Degree</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <span style="color:black">Specializations:</span>
+            <div class="form-group">
+                <select class="form-control" id="specialization_id" name="specialization_id">
+                    <option value="" disabled="1" selected="1">Select Specializations</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <span style="color:black">Select Passing Year:</span>
+            <div class="form-group">
+                <select class="form-control" id="year" name="year">
+                    <option value="" disabled="1" selected="1">Select Passing Year</option>
+                    <t t-foreach="passing_year" t-as="pass_year">
+                        <option t-att-value="pass_year.name">
+                            <t t-esc="pass_year.name"/>
+                        </option>
+                    </t>
+                </select>
+            </div>
+        </div>
+    </div>
 
-                                        <span for="degree_level" class="form-label-norequired" style="color:black">Degree Level:</span>
-                                        <div class="form-group">
-                                            <!-- <input type="text" id='degree' name="degree" class="form-control " /> -->
-                                            <!-- <t t-set="academics" t-value="dict(academic_id.fields_get(allfields=['degree_level'])['degree_level']['selection'])"/> -->
-                                            <select class="form-control" required="1" id="degree_level" name="degree_level">
-                                                <option value="" disabled="1" selected="1">Select Degree Level</option>
-                                                <t t-foreach="academic_data" t-as="degree_level">
-                                                    <option t-att-code="degree_level.code" t-att-value="degree_level.id">
-                                                        <t t-esc="degree_level.name"/>
-                                                    </option>
-                                                </t>
-                                            </select>
-                                        </div>
-                                    </div>
+    <!-- Row 2: Result Status, Roll No, Institute fields, Exam Type -->
+    <div class="row">
+        <div class="col-lg-3">
+            <span style="color:black">Select Result Status:</span>
+            <div class="form-group">
+                <select class="form-control" required="1" id="result_status" name="result_status">
+                    <option value="" disabled="1" selected="1">Select Result Status</option>
+                    <option value="waiting">Waiting</option>
+                    <option value="complete">Declared</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <span style="color:black">Roll No.:</span>
+            <div class="form-group">
+                <input class="form-control" required="0" type="text" name="roll_no" id="roll_no"/>
+            </div>
+        </div>
+        <!-- School (SSC) -->
+        <div class="col-lg-3">
+            <span style="color:black">School:</span>
+            <div class="form-group">
+                <input class="form-control" required="0" type="text"
+                       id="institute_school" placeholder="School Name"/>
+            </div>
+        </div>
+        <!-- College (HSSC) - hidden by default -->
+        <div class="col-lg-3" style="display:none;">
+            <span style="color:black">College:</span>
+            <div class="form-group">
+                <input class="form-control" required="0" type="text"
+                       id="institute_college" placeholder="College Name"/>
+            </div>
+        </div>
+        <!-- University (Graduate+) - hidden by default -->
+        <div class="col-lg-3" style="display:none;">
+            <span style="color:black">University/Institute:</span>
+            <div class="form-group">
+                <input class="form-control" required="0" type="text"
+                       id="institute_university" placeholder="University Name"/>
+            </div>
+        </div>
+    </div>
 
-                                    <div class="col-lg-3">
+    <!-- Row 3: Board, Exam Type -->
+    <div class="row">
+        <div class="col-lg-4">
+            <span style="color:black">Board:</span>
+            <div class="form-group">
+                <select class="form-control" id="board" name="board">
+                    <option disabled="1" selected="1" value="">Select Board</option>
+                    <t t-foreach="board_id" t-as="b">
+                        <option t-att-value="b.name">
+                            <t t-esc="b.name"/>
+                        </option>
+                    </t>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-4" id="exam_type_div" style="display:none;">
+            <span style="color:black">Exam Type:</span>
+            <div class="form-group">
+                <select class="form-control" id="exam_type" name="exam_type">
+                    <option value="">Select Exam Type</option>
+                    <option value="annual">Annual</option>
+                    <option value="supply">Supply</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <span style="color:black">Roll No. (2nd Year - waiting):</span>
+            <div class="form-group" style="display:none;">
+                <input class="form-control validate_number" type="text"
+                       name="roll_number_last" id="roll_number_last"/>
+            </div>
+        </div>
+    </div>
 
-                                        <span for="degree_id" class="form-label-norequired" style="color:black">Degree :</span>
-                                        <div class="form-group">
-                                            <!-- <input type="text" id='degree' name="degree" class="form-control " /> -->
-                                            <!-- <t t-set="academics" t-value="dict(academic_id.fields_get(allfields=['degree_level'])['degree_level']['selection'])"/> -->
-                                            <select class="form-control" required="1" id="degree_id" name="degree_id">
-                                                <option value="" disabled="1" selected="1">Select Degree</option>
+    <!-- Last Year Slip upload (waiting result) -->
+    <div class="row" id="last_year_slip_row" style="display:none;">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <span style="color:black">Last Year Slip:</span>
+                <input class="form-control" type="file" id="last_year_slip"
+                       accept="image/*,.pdf"/>
+            </div>
+        </div>
+    </div>
 
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3">
+    <hr/>
 
-                                        <span for="specialization_id" class="form-label-norequired" style="color:black">Specializations :</span>
-                                        <div class="form-group">
-                                            <select class="form-control" id="specialization_id" name="specialization_id">
-                                                <option value="" disabled="1" selected="1">Select Specializations</option>
+    <!-- CGPA vs Marks radio toggle (graduate level) -->
+    <div class="row" id="cgpa_marks_radio_row" style="display:none;">
+        <div class="col-12" style="padding:10px 15px;">
+            <label>
+                <input type="radio" name="marks_cgpa" id="marks_radio" value="marks" checked="1"/> Marks
+            </label>
+            &#160;&#160;
+            <label>
+                <input type="radio" name="marks_cgpa" value="cgpa"/> CGPA
+            </label>
+        </div>
+    </div>
 
-                                            </select>
-                                        </div>
-                                    </div>
+    <!-- Marks row -->
+    <div class="row" id="marks_div_row">
+        <div class="col-lg-4">
+            <div class="form-group">
+                <span style="color:black">Total Marks: <span id="total_marks_label"/></span>
+                <input class="form-control validate_number" required="0" type="number"
+                       name="total_marks" id="total_marks" placeholder="Total Marks"/>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <span style="color:black">Obtained Marks: <span id="obtained_marks_label"/></span>
+                <input class="form-control validate_number" required="0" type="number"
+                       name="obtained_marks" id="obtained_marks" placeholder="Obtained Marks"/>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <span style="color:black">Percentage (%):</span>
+                <input required="0" class="form-control" readonly="1" type="text"
+                       name="percentage" id="percentage" placeholder="Auto calculated"/>
+            </div>
+        </div>
+    </div>
 
-                                    <div class="col-lg-3" style="">
-                                        <div class="form-group">
-                                            <span for="passing_year" class="form-label-norequired" style="color:black">Select Passing Year:</span>
-                                            <select class="form-control" required="0" id="year" name="year">
-                                                <option  disabled="1" value="">Select Passing Year</option>
-                                                <t t-foreach="passing_year" t-as="pass_year">
-                                                    <option t-att-value="pass_year.name">
-                                                       <t t-esc="pass_year.name"/>
-                                                    </option>
-                                                </t>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3" style="" >
-                                        <div class="form-group">
-                                            <span for="result_status" class="form-label-norequired" style="color:black">Select Result Status:</span>
-                                            <select class="form-control" required="1" id="result_status" name="result_status">
-                                                <option  disabled="1" value="">Select Result Status</option>
-                                                <option value="waiting">Waiting</option>
-                                                <option selected="1" value="complete">Declared</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <!-- <img onclick="document.getElementById('profile_image').click()" id='cal' src="/odoocms_admission_portal/static/img/icon/calculator.ico" alt="Avatar"></img> -->
+    <!-- CGPA row (hidden by default, shown for graduate when CGPA radio selected) -->
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-group" style="display:none;">
+                <span style="color:black">Total CGPA:</span>
+                <input class="form-control validate_number" required="0" type="number"
+                       step="0.01" name="total_cgpa" id="total_cgpa" placeholder="e.g. 4.0"/>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group" style="display:none;">
+                <span style="color:black">Obtained CGPA:</span>
+                <input class="form-control validate_number" required="0" type="number"
+                       step="0.01" name="obtained_cgpa" id="obtained_cgpa" placeholder="e.g. 3.5"/>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group" style="display:none;" id="percentage_cgpa">
+                <span style="color:black">Percentage (CGPA based):</span>
+                <input class="form-control" readonly="1" type="text" id="percentage_cgpa_val"/>
+            </div>
+        </div>
+    </div>
 
-                                    <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <span for="roll_number_last" class="form-label-norequired" style="color:black">Roll Number:</span>
-                                            <input required="0" class="form-control" type="text" name="roll_number_last" id="roll_number_last"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr/>
-                                
-                               <div class="row">
-                                    <div class="col-lg-4" id="roll_no_div">
-                                        <div class="form-group">
-                                            <span style="color:black">Board Roll No.:</span>
-                                            <input class="form-control" required="0" type="text"
-                                                   name="roll_no" id="roll_no"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <span style="color:black">School / Institute:</span>
-                                            <input class="form-control" required="0" type="text"
-                                                   name="institute" id="institute" placeholder="Institute Name"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4" id="board_div">
-                                        <div class="form-group">
-                                            <span style="color:black">Board:</span>
-                                            <select class="form-control" id="board" name="board">
-                                                <option disabled="1" selected="1" value="">Select Board</option>
-                                                <t t-foreach="board_id" t-as="b">
-                                                    <option t-att-value="b.name">
-                                                        <t t-esc="b.name"/>
-                                                    </option>
-                                                </t>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                               
-                                <!-- Marks row - shown/hidden by JS based on degree level -->
-                                <div class="row" id="marks_div_row">
-                                    <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <span style="color:black">Total Marks: <span id="total_marks_label"/></span>
-                                            <input class="form-control validate_number" required="0" type="number"
-                                                   name="total_marks" id="total_marks" placeholder="Total Marks"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <span style="color:black">Obtained Marks: <span id="obtained_marks_label"/></span>
-                                            <input class="form-control validate_number" required="0" type="number"
-                                                   name="obtained_marks" id="obtained_marks" placeholder="Obtained Marks"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <span style="color:black">Percentage (%):</span>
-                                            <input required="0" class="form-control" readonly="1" type="text"
-                                                   name="percentage" id="percentage" placeholder="Auto calculated"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 text-center" style="padding-top:20px;">
-                                        <a role="button" id="olevel_calculator_btn" data-toggle="modal"
-                                           data-target="#olevel_calculator" data-whatever="@mdo"
-                                           class="calculator-btn" style="display:none;">
-                                            <i class="fas fa-calculator"/> O-Level Calc
-                                        </a>
-                                        <a role="button" id="alevel_calculator_btn" data-toggle="modal"
-                                           data-target="#alevel_calculator" data-whatever="@mdo"
-                                           class="calculator-btn" style="display:none;">
-                                            <i class="fas fa-calculator"/> A-Level Calc
-                                        </a>
-                                    </div>
-                                </div>
-                                <!-- CGPA row - shown/hidden by JS for university degrees -->
-                                <div class="row" id="cgpa_marks_radio_row" style="display:none;">
-                                    <div class="col-12" style="padding:10px 15px;">
-                                        <label><input type="radio" name="marks_cgpa" value="marks" checked="1"/> Marks</label>
-                                        &#160;&#160;
-                                        <label><input type="radio" name="marks_cgpa" value="cgpa"/> CGPA</label>
-                                    </div>
-                                </div>
-                                <div class="row" id="cgpa_div_row" style="display:none;">
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <span style="color:black">Total CGPA:</span>
-                                            <input class="form-control validate_number" required="0" type="number"
-                                                   step="0.01" name="total_cgpa" id="total_cgpa" placeholder="e.g. 4.0"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <span style="color:black">Obtained CGPA:</span>
-                                            <input class="form-control validate_number" required="0" type="number"
-                                                   step="0.01" name="obtained_cgpa" id="obtained_cgpa" placeholder="e.g. 3.5"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Roll No / Institute / Board row -->
-                                
-                                <!-- Second year roll no - shown for waiting result (Intermediate/DAE) -->
-                                <div class="row" id="last_year_slip_div" style="display:none;">
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <span style="color:black">2nd Year Roll No. (Waiting Result):</span>
-                                            <input class="form-control validate_number" type="text"
-                                                   name="roll_number_last" id="roll_number_last_waiting"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                
+    <!-- O/A Level calculator buttons -->
+    <div class="row">
+        <div class="col-lg-4">
+            <a role="button" id="olevel_calculator_btn" data-toggle="modal"
+               data-target="#olevel_calculator" data-whatever="@mdo"
+               class="calculator-btn" style="display:none;">
+                <i class="fas fa-calculator"/> O-Level Calculator
+            </a>
+            <a role="button" id="alevel_calculator_btn" data-toggle="modal"
+               data-target="#alevel_calculator" data-whatever="@mdo"
+               class="calculator-btn" style="display:none;">
+                <i class="fas fa-calculator"/> A-Level Calculator
+            </a>
+        </div>
+    </div>
 
+    <!-- Degree Document upload -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <span style="color:black">Degree Document:</span>
+                <input class="form-control" type="file" id="degree_document"
+                       accept="image/*,.pdf"/>
+            </div>
+        </div>
+    </div>
 
-                                <div id="subject_div" class="row"/>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <input style="" type="submit" value="Add Education" class="btn btn-primary "/>
-                                    </div>
-                                    <div class="col-6"/>
-                                </div>
+    <!-- Subjects div (filled by JS for O/A level) -->
+    <div id="subject_div" class="row"/>
 
-                            </form>
+    <div class="row">
+        <div class="col-6">
+            <input style="display:none;" type="submit" value="Add Education"
+                   class="btn btn-primary"/>
+        </div>
+    </div>
+</form>
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                            <button onclick="document.getElementById('update_education_check').value=0;$('#degree_level').removeAttr('disabled');$('#degree_id').removeAttr('disabled'); document.getElementById('add_education_form').reset();" type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
                             <button onclick="check_form_validation(this)" class="btn btn-primary ml-1 color_scheme_class">Update</button>
 
