@@ -330,20 +330,30 @@ $(document).ready(function () {
             $("#institute_university_div").hide();
             $("#board").parent().show();
           }
-          if (code == "ug-14" || code == "ug-16" || code == "grad-16" || code == "grad-18") {
+         
+          if (code == "ug-14" || code == "ug-16" || code == "grad-16" || code == "grad-18" && code != "phd") {
             $("#result_status").val("complete");
             $("#result_status").css({ "pointer-events": "none" });
             $("#institute_school_div").hide();
             $("#institute_college_div").hide();
             $("#institute_university_div").show();
             $("#board").parent().show();
+            $("#roll_no").closest('.col-lg-3').show();
             $("#roll_no").parent().show();
+            // Force radio row visible with BOTH options
             $("#cgpa_marks_radio_row").show();
+            $("#marks_radio").parent().show();
             $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
+            // Hide marks, show CGPA - FORCE with inline style
             $("#marks_div_row").hide();
-            $("#cgpa_div_row").show();
-          }
-          if (code != "ssc" && code != "hssc" && code != "ug-14" && code != "ug-16" && code != "grad-16" && code != "grad-18") {
+            $("#cgpa_div_row").css('display', 'flex !important');
+            $("#cgpa_div_row").removeAttr('style').css('display', 'flex');
+            // Force each CGPA column visible
+            $("#total_cgpa").closest('.col-lg-4').show();
+            $("#obtained_cgpa").closest('.col-lg-4').show();
+            }
+
+          if (code != "ssc" && code != "hssc" && code != "ug-14" && code != "ug-16" && code != "grad-16" && code != "grad-18" && code != "phd") {
             $("#result_status").css({ "pointer-events": "" });
             $("#institute_school_div").css('display', '');
             $("#institute_college_div").css('display', 'none');
