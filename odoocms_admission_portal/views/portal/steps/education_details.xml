@@ -120,7 +120,8 @@ complete and honestly presented by me. Misleading or incorrect information would
 </div>
 <div class="modal-body">
 <div class="container">
-<form id="add_education_form" method="post">
+<form id="add_education_form" method="post" novalidate="novalidate">
+
 <input type="hidden" id="update_education_check" value="0"/>
 <input type="hidden" id="step_no_edu" name="step_no" t-att-value="counter_step"/>
 <input type="hidden" id="step_name_edu" name="step_name" value="education"/>
@@ -289,6 +290,7 @@ complete and honestly presented by me. Misleading or incorrect information would
 <!--<button onclick="check_form_validation(this)" class="btn btn-primary ml-1 color_scheme_class">Save</button> 
 <button type="button" onclick="submit_education_form()" class="btn btn-primary ml-1 color_scheme_class">Save</button>-->
 <button type="submit" class="btn btn-primary ml-1 color_scheme_class">Save</button>
+
 
 
 </div>
