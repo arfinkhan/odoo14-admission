@@ -394,12 +394,18 @@ $(document).ready(function () {
       processData: false,
       data: formData,
       success: function (response) {
-        data = JSON.parse(response);
-        if (data.status == 'noerror') {
+      data = JSON.parse(response);
+      if (data.status == 'noerror') {
+          // Blur focus from button first
+          document.activeElement.blur();
+          // Hide modal
           $('#addeducation').modal('hide');
-          location.reload();
-        } else { alert('Error: ' + data.msg); }
-        $('#page_loader').hide();
+          // Small delay then reload
+          setTimeout(function() {
+              location.reload();
+          }, 300);
+      } else { alert('Error: ' + data.msg); }
+      $('#page_loader').hide();
       },
       error: function (xhr, status, error) {
         alert('Submission failed! Check console (F12)');
