@@ -326,10 +326,6 @@ function add_education_check() {
     $("#add_education_form").find(`#degree_level option:contains(${degree_leveladded})`).attr("disabled", "1");
   });
 }
-
-// =====================================================================
-// REPLACE EVERYTHING BELOW THIS LINE IN YOUR CURRENT FILE
-// =====================================================================
 $(document).ready(function () {
   // education details js
   $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
@@ -415,7 +411,7 @@ $(document).ready(function () {
             $("#board").parent().show();
           }
           
-          // ✅ FIXED: For 14/16/18 years education - show CGPA by default
+          // For 14/16/18 years education - show CGPA by default
           if (code == "ug-14" || code == "ug-16" || code == "grad-16" || code == "grad-18") {
             $("#result_status").val("complete");
             $("#result_status").css({ "pointer-events": "none" });
@@ -429,7 +425,7 @@ $(document).ready(function () {
             $("#cgpa_marks_radio_row").show();
             $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
             
-            // ✅ IMPORTANT: Hide marks row, show CGPA row
+            // Hide marks row, show CGPA row
             $("#marks_div_row").hide();
             $("#cgpa_div_row").show();
           }
@@ -437,9 +433,9 @@ $(document).ready(function () {
           // For other degree levels (below 14 years but not SSC/HSSC)
           if (code != "ssc" && code != "hssc" && code != "ug-14" && code != "ug-16" && code != "grad-16" && code != "grad-18") {
             $("#result_status").css({ "pointer-events": "" });
-            $("#institute_school_div").hide();
-            $("#institute_college_div").hide();
-            $("#institute_university_div").show();
+            $("#institute_school_div").css('display', '');
+            $("#institute_college_div").css('display', 'none');
+            $("#institute_university_div").css('display', 'block');
           }
         }
       },
@@ -449,21 +445,69 @@ $(document).ready(function () {
   // ===== MARKS/CGPA RADIO BUTTON HANDLER =====
   $("input[name='marks_cgpa']").on("change", function () {
     if ($(this).val() == "marks") {
-      // Marks selected
       $("#marks_div_row").show();
       $("#cgpa_div_row").hide();
     } else {
-      // CGPA selected
       $("#marks_div_row").hide();
       $("#cgpa_div_row").show();
     }
   });
   
-  // Sync institute field values before form submit
-$("#add_education_form").on("submit", function() {
+  // ===== EDUCATION FORM SUBMIT HANDLER WITH AJAX =====
+  $("#add_education_form").on("submit", function (e) {
+    e.preventDefault();  // STOP normal form submission
+    
+    // Sync institute value to hidden field
     var val = $("#institute_school").val() || $("#institute_college").val() || $("#institute_university").val() || "";
     $("#institute_hidden").val(val);
-});
+    
+    // Validate required visible fields
+    var valid = true;
+    $(this).find('.form-control').each(function () {
+      if ($(this).prop('required') && $(this).is(':visible')) {
+        if ($(this).is('select') && ($(this).val() === '' || $(this).val() === '0')) {
+          $(this).css('border-bottom', '2px solid red');
+          valid = false;
+          return false;
+        }
+        if (!this.checkValidity()) {
+          $(this).css('border-bottom', '2px solid red');
+          valid = false;
+          return false;
+        }
+        $(this).css('border-bottom', '');
+      }
+    });
+    
+    if (!valid) return false;
+    
+    // Send AJAX to save endpoint
+    var formData = new FormData(this);
+    $('#page_loader').show();
+    
+    $.ajax({
+      url: '/admission/application/save/',
+      type: 'POST',
+      contentType: false,
+      processData: false,
+      data: formData,
+      success: function (response) {
+        data = JSON.parse(response);
+        if (data.status == 'noerror') {
+          $('#addeducation').modal('hide');
+          // Reload page to show updated education list
+          location.reload();
+        } else {
+          alert('Error: ' + data.msg);
+        }
+        $('#page_loader').hide();
+      },
+      error: function (xhr, status, error) {
+        alert('Submission failed: ' + error);
+        $('#page_loader').hide();
+      }
+    });
+  });
   
   // ===== DEGREE CHANGE HANDLER =====
   $("#degree_id").on("change", function (e) {
