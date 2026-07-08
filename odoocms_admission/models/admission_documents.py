@@ -57,7 +57,9 @@ class AdmissionDocuments(models.Model):
     degree_attachment = fields.Binary('Degree Attachment Download', related='attachment')
     year = fields.Char(string='Passing Year')
     hope_certificate = fields.Image('Hope Certificate View', attachment=True)
-    hope_certificate_attachment = fields.Image('Hope Certificate Download', related='hope_certificate')
+    hope_certificate_attachment = fields.Image('Hope Certificate Download', related='hope_certificate') 
+    exam_type = fields.Selection([('annual', 'Annual'),('supply', 'Supply'),], string='Exam Type')
+
 
     def action_document_verified(self):
         self.doc_verify = True
