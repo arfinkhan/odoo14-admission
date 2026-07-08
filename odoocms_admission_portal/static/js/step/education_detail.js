@@ -1,545 +1,411 @@
-// delete education from table and from database
-function delete_education(param) {
-  data = { edu_id: $(param).attr("value") };
-  let confirmAction = confirm("Are you sure to delete?");
-  if (confirmAction) {
-    $.post("/delete/education/", data, function (data, textStatus) {
-      data = JSON.parse(data);
-      if (data["status"] == "noerror") {
-        if (
-          $("#prefer_div_already").find("li").length >= 1 ||
-          $("#sortable_program_list").find("li").length > 0
-        ) {
-          $("#sortable_program_list").find("li").remove();
-          $("#prefer_div_already").find("li").remove();
-          $("#view_offered_program_button").css({ "pointer-events": "" });
-          $("#view_offered_program_button").removeAttr("disabled");
-        }
-        preferences_allowed = data["preferences_allowed"];
-        $("#preference_allowed").val(preferences_allowed);
-        if ($(".preference_input_no").length != preferences_allowed) {
-          $(".preference_input_no").remove();
-          if (preferences_allowed > 0) {
-            for (var i = 0; i < preferences_allowed; i++) {
-              input = `<input class="form-control preference_input_no" type="text" placeholder='Preference No ${i + 1
-                }' />`;
-              $("#prefer_div").append(input);
-            }
-          }
-        }
-      }
-      $(param).parents("tr").remove();
-      $("#add_education_form").find(`#degree_level option`).each(function (index, element) {
-        $(element).removeAttr("disabled");
-      });
-      $("#education_table_body").find("tr").each(function (index, element) {
-        degree_leveladded = $(element).attr("degree_level");
-        $("#add_education_form").find(`#degree_level option:contains(${degree_leveladded})`).attr("disabled", "1");
-      });
-    });
-  }
-}
-// this function is used when we add subject in education
-function prepare_subject(param) {
-  let selected = $(param).find("option:selected").val();
-  if (selected != "") {
-    $(param).parents(".subject_main_div").siblings(".subject_main_div").find("select").find(`option[value=${selected}]`).attr("disabled", "1");
-  }
-  var all_selected_option = [];
-  selected_option = $(".subject_main_div").find("select").find("option:selected");
-  $(selected_option).each(function (index, element) {
-    if ($(element).val() != "") {
-      all_selected_option.push(parseInt($(element).val()));
-    }
-  });
-  all_option = $(".subject_main_div").find("select option");
-  $(all_option).each(function (index, element) {
-    element_value = parseInt($(element).val());
-    if (element_value != "") {
-      if (all_selected_option.includes(element_value)) {
-      } else {
-        $(".subject_main_div").find("select").find(`option[value=${element_value}]`).each(function (index, el) {
-          $(el).removeAttr("disabled");
-        });
-      }
-    }
-  });
-  value = $(param).val();
-  $(param).parents("subject_main_div").attr("id", value);
-}
-function check_subject_marks(param) {
-  // this function is used to check obtained_marks less then total marks of subject
-  const obtained_marks = $(param).parents(".subject_main_div").find("input[name='subj_marks']").val();
-  const total_marks = $(param).parents(".subject_main_div").find("input[name='subj_total_marks']").val();
-  if (obtained_marks != "" && total_marks != "") {
-    if (parseFloat(total_marks) < parseFloat(obtained_marks)) {
-      $(param).parents(".subject_main_div").find("input[name='subj_marks']").val("");
-    }
-  }
-}
-function result_status_change() {
-  $("#roll_number_last").parent("div").hide();
-  $("#last_year_slip").parent("div").hide();
-  $("#total_marks_label").text("Total Marks:");
-  $("#obtained_marks_label").text("Obtained Marks:");
-  if (
-    $("#degree_id option:selected").text().trim() == "Intermediate" ||
-    $("#degree_id option:selected").text().trim() == "intermediate"
-  ) {
-    if ($("#result_status").val() == "waiting") {
-      $("#roll_number_last").parent("div").show();
-      $("#last_year_slip").parent("div").show();
-      $("#roll_number_last").siblings("span").text("Second Year Board Roll No.");
-      $("#total_marks_label").text("First Year Total Marks:");
-      $("#obtained_marks_label").text("First Year Obtained Marks:");
-    } else {
-      $("#roll_number_last").parent("div").hide();
-      $("#last_year_slip").parent("div").hide();
-      $("#total_marks_label").text("Total Marks:");
-      $("#obtained_marks_label").text("Obtained Marks:");
-    }
-  }
-  if (
-    $("#degree_id option:selected").text().trim() == "DAE" ||
-    $("#degree_id option:selected").text().trim() == "dae"
-  ) {
-    if ($("#result_status").val() == "waiting") {
-      $("#roll_number_last").parent("div").show();
-      $("#last_year_slip").parent("div").show();
-      $("#roll_number_last").siblings("span").text("DAE Last Year Roll No.");
-      $("#total_marks_label").text("Second Year Total Marks:");
-      $("#obtained_marks_label").text("Second Year Obtained Marks:");
-    } else {
-      $("#roll_number_last").parent().hide();
-      $("#last_year_slip").parent().hide();
-      $("#total_marks_label").text("Total Marks:");
-      $("#obtained_marks_label").text("Obtained Marks:");
-    }
-  }
-}
-function update_education(param) {
-  document.getElementById("add_education_form").reset();
-  academic_id = $(param).attr("value");
-  degree_level = `<option value="${$(param).parents("tr").find("#degree_level_id").val()}" selected='1'>${$(param).parents("tr").find("#degree_level_id").val()}</option>`;
-  degree = `<option value="${$(param).parents("tr").find("#degree_name").val()}" selected='1'>${$(param).parents("tr").find("#degree_name").attr("degree_name")}</option>`;
-  year = $(param).parents("tr").find("#year_edu").val();
-  total_marks = $(param).parents("tr").find("#tot_marks").val();
-  obtained_marks = $(param).parents("tr").find("#obt_marks").val();
-  total_cgpa = $(param).parents("tr").find("#tot_cgpa").val();
-  obtained_cgpa = $(param).parents("tr").find("#obt_cgpa").val();
-  roll_no = $(param).parents("tr").find("#roll_no_tab").val();
-  institue_tb = $(param).parents("tr").find("#institute_tab").val();
-  board_tb = $(param).parents("tr").find("#board_tab").val();
-  specialization = `<option value="${$(param).parents("tr").find("#group_specialization_name").val()}" selected='1'>${$(param).parents("tr").find("#group_specialization_name").attr("group_specialization_name")}</option>`;
-  $("#update_education_check").val(1);
-  $("#degree_level").val($(param).parents("tr").find("#degree_level_id").val());
-  $("#degree_level").trigger("change");
-  $("#degree_level").attr("disabled", "1");
-  $("#degree_id").append(degree);
-  $("#degree_id").attr("disabled", "1");
-  $("#year").val(year);
-  $("#result_status").val(
-    $(param).parents("tr").find("#result_status_update_").val()
-  );
-  $("#degree_level").trigger("change");
-  $("#total_marks").val(total_marks);
-  $("#obtained_marks").val(obtained_marks);
-  $("#total_cgpa").val(total_cgpa);
-  $("#obtained_cgpa").val(obtained_cgpa);
-  $("#institute").val(institue_tb);
-  $("#percentage").val(
-    parseFloat((obtained_marks / total_marks) * 100).toFixed(2)
-  );
-  $("#roll_no").val(roll_no);
-  $("#board").val(board_tb);
-  degree_id = $("#degree_id").val();
-  degree_name = $("#degree_id option:selected").text().trim();
-  if (
-    degree_name == "O-Level" ||
-    degree_name == "olevel" ||
-    degree_name == "o-level"
-  ) {
-    $("#result_status").parent().hide();
-    $("#board").parent().parent().hide();
-    $("#roll_no").parent().parent().hide();
-    $("#olevel_calculator_btn").show();
-    $("#alevel_calculator_btn").hide();
-    $("#obtained_marks").attr("readonly", "1");
-    $("#total_marks").attr("readonly", "1");
-    return false;
-  } else if (
-    degree_name == "A-Level" ||
-    degree_name == "alevel" ||
-    degree_name == "a-level"
-  ) {
-    $("#result_status").parent().hide();
-    $("#board").parent().parent().hide();
-    $("#roll_no").parent().parent().hide();
-    $("#olevel_calculator_btn").hide();
-    $("#alevel_calculator_btn").show();
-    $("#obtained_marks").attr("readonly", "1");
-    $("#total_marks").attr("readonly", "1");
-    return false;
-  } else {
-    $("#result_status").parent().show();
-    $("#board,#specialization_id,#roll_no").parent().parent().show();
-    $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
-    $("#obtained_marks,#total_marks").removeAttr("readonly");
-  }
-  degree_level_code = $("#degree_level option:selected").attr("code").toLowerCase().trim();
-  if (degree_level_code == "ssc" || degree_level_code == "hssc") {
-    var formData = new FormData();
-    formData.append("degree_id", degree_id);
-    $.ajax({
-      url: "/degree/specializations/",
-      type: "POST",
-      dataType: "json",
-      data: formData,
-      contentType: false,
-      processData: false,
-      success: function (data) {
-        result_status_change();
-        if (data.status == "noerror") {
-          $("#specialization_id").empty();
-          $("#specialization_id").append(
-            "<option selected='1' value=''>Select Specializations </option>"
-          );
-          for (j = 0; j < data.specializations.length; j++) {
-            selected_option = $(param).parents("tr").find("#group_specialization_name").val();
-            if (data.specializations[j].id == parseInt(selected_option)) {
-              $("#specialization_id").append(
-                "<option selected='1' value=" +
-                data.specializations[j].id +
-                ">" +
-                data.specializations[j].name +
-                "</option>"
-              );
-            } else {
-              $("#specialization_id").append(
-                "<option value=" +
-                data.specializations[j].id +
-                ">" +
-                data.specializations[j].name +
-                "</option>"
-              );
-            }
-          }
-        } else {
-          console.error(data);
-        }
-      },
-    });
-  } else {
-    $("#specialization_id").parent().parent().hide();
-  }
-  degree_level_selected = $("#degree_level option:selected").attr("code").toLowerCase();
-  if (degree_level_selected == "ssc") {
-    $("#institute_university_div").hide();
-    $("#institute_college_div").hide();
-    $("#institute_school_div").show();
-    $("#institute_school").val(institue_tb);
-    $("#cgpa_marks_radio_row").hide();
-    $("#exam_type").show();
-    $("#marks_div_row").show();
-    $("#cgpa_div_row").hide();
-    $("#total_marks_label").text("Total Marks:");
-    $("#obtained_marks_label").text("Obtained Marks:");
-  } else if (degree_level_selected == "hssc") {
-    $("#institute_university_div").hide();
-    $("#institute_college_div").show();
-    $("#exam_type").show();
-    $("#institute_college").val(institue_tb);
-    $("#institute_school_div").hide();
-    $("#cgpa_marks_radio_row").hide();
-    $("#marks_div_row").show();
-    $("#cgpa_div_row").hide();
-    $("#total_marks_label").text("Total Marks:");
-    $("#obtained_marks_label").text("Obtained Marks:");
-  } else {
-    $("#institute_university_div").show();
-    $("#institute_college_div").hide();
-    $("#institute_school_div").hide();
-    $("#board").parent().show();
-    $("#roll_no").parent().show();
-    
-    if (total_cgpa > 0 || obtained_cgpa > 0) {
-      $("#cgpa_marks_radio_row").show();
-      $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
-      $("#marks_div_row").hide();
-      $("#cgpa_div_row").show();
-      $("#total_cgpa_label").text("Total CGPA:");
-      $("#obtained_cgpa_label").text("Obtained CGPA:");
-    } else {
-      $("#cgpa_marks_radio_row").show();
-      $("input[name='marks_cgpa'][value='marks']").prop("checked", true);
-      $("#marks_div_row").show();
-      $("#cgpa_div_row").hide();
-      $("#total_marks_label").text("Total Marks:");
-      $("#obtained_marks_label").text("Obtained Marks:");
-    }
-  }
-  $("#subject_div").empty();
-  if (
-    $(param).parents("tr").find("#subject_marks_td").find("input").length > 0
-  ) {
-    $("#subject_div").append("<h3>Subjects Details</h3>");
-    $("#subject_div").append("<hr/>");
-    selection_div = `<select required='1' id='selected_subject'>${selection_subjects}</select>`;
-    var selection_subjects =
-      "'<option selected='1' value=''>Select Subject</option>'";
-    $(param).parents("tr").find("#subject_marks_td").find("input").each(function (index, element) {
-      sub_name = $(element).attr("value");
-      tot_marks = $(element).attr("total_marks");
-      obt_marks = $(element).attr("obtained_marks");
-      selection_subjects += `<option selected='1' value='${$(element).attr(
-        "id"
-      )}'> ${$(element).attr("value")}</option>`;
-      str = `<div class='subject_main_div row' id ='${element.id}'>
-<div id='select_marks_div' class="col-md-2 mt-2 px-0">
-<select onchange='prepare_subject(this)' required='1' class='form-control' name='selected_subject' id='selected_subject'>${selection_subjects}</select>
-</div>
-<div class="col-lg-4 mt-1">
-<input onchange='check_subject_marks(this)' maxlength='4' class="form-control subj_marks validate_number" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 13)" placeholder='Obtained Marks' required='1' type="text" value='${tot_marks}' name="subj_marks" id="${element.name}_marks" />
-</div>
-<div class="col-lg-5 mt-1">
-<input class="form-control subject_total_marks validate_number" maxlength='4' onchange='check_subject_marks(this)' onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 13)" placeholder='Total Marks' required='1' type="text" value='${obt_marks}' name="subj_total_marks" id="${element.name}_total_marks" />
-</div>
-</div>
-`;
-      $("#subject_div").append(str);
-      selection_subjects =
-        "'<option selected='1' value=''>Select Subject</option>'";
-    });
-  }
-}
-function add_education_check() {
-  // this funciton is used to disabled degree level that is already added
-  document.getElementById("update_education_check").value = 0;
-  document.getElementById("add_education_form").reset();
-  $("#degree_level").removeAttr("disabled");
-  $("#degree_id").removeAttr("disabled");
-  $("#add_education_form").find(`#degree_level option`).each(function (index, element) {
-    $(element).removeAttr("disabled");
-  });
-  $("#education_table_body").find("tr").each(function (index, element) {
-    degree_leveladded = $(element).attr("degree_level");
-    $("#add_education_form").find(`#degree_level option:contains(${degree_leveladded})`).attr("disabled", "1");
-  });
-}
-function submit_education_form() {
-    var form = document.getElementById('add_education_form');
-    var valid = true;
-    $(form).find('.form-control').each(function() {
-        if ($(this).prop('required') && $(this).is(':visible')) {
-            if (!this.checkValidity() || ($(this).is('select') && ($(this).val() === '' || $(this).val() === '0'))) {
-                $(this).css('border-bottom', '2px solid red');
-                valid = false;
-                return false;
-            } else {
-                $(this).css('border-bottom', '');
-            }
-        }
-    });
-    if (valid) {
-        $(form).find(':submit').click();
-    }
-}
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+<template id="education_details" name="Educations">
+<!-- Fourth Page Education Detail -->
+<div id="education_header_tab" class="ml-3 mr-3 header_tab diable_header_tab mt-0 p-2" onclick="$('#collapse4').slideToggle(1000); $('#angle_class4').toggleClass('fa-angle-down fa-angle-up');">
+<a class="btn btn-link">
+<i style="color: white;font-size: 25px;" class="fa-solid fa-book float-left"/>
 
-// =====================================================================
-// REPLACE EVERYTHING BELOW THIS LINE IN YOUR CURRENT FILE
-// =====================================================================
-$(document).ready(function () {
-  // education details js
-  $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
-  $("#total_cgpa,#obtained_cgpa,#roll_number_last,#last_year_slip").parent().hide();
-  $("#cgpa_div_row").hide();
-  if ($("#education_table").find("tbody tr").length < 1) {
-    $("#education_table").hide();
-  }
-  $("#result_status").on("change", function () {
-    result_status_change();
-  });
-  
-  // ===== DEGREE LEVEL CHANGE HANDLER =====
-  $("#degree_level").on("change", function (e) {
-    val = $(this).val();
-    if ($("#degree_level").val() == "") {
-      return false;
-    }
-    document.getElementById("add_education_form").reset();
-    $("#degree_level").val(val);
-    $("#subject_div").empty();
-    $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
-    $("#specialization_id").empty();
-    $("#specialization_id").append(
-      "<option selected='1' value=''>Select Specializations </option>"
-    );
-    
-    var code = $("#degree_level option:selected").attr("code").trim().toLowerCase();
-    
-    if (code == "ssc" || code == "hssc") {
-      $("#specialization_id").parent().parent().show();
-    } else {
-      $("#specialization_id").parent().parent().hide();
-    }
-    
-    degree_level_id = $("#degree_level").val();
-    var formData = new FormData();
-    formData.append("degree_id", degree_level_id);
-    $.ajax({
-      url: "/degree/level/degree/",
-      type: "POST",
-      dataType: "json",
-      data: formData,
-      contentType: false,
-      processData: false,
-      success: function (data) {
-        if (data.status == "noerror") {
-          $("#degree_id").empty();
-          $("#degree_id").append(
-            " <option selected='1' value='0'>Select Degree </option>"
-          );
-          for (j = 0; j < data.degrees.length; j++) {
-            $("#degree_id").append(
-              " <option code=" + data.degrees[j].code +
-              " value=" + data.degrees[j].id +
-              " > " + data.degrees[j].name + "</option>"
-            );
-          }
-          
-          // Reset all visibility
-          $("#institute_school_div").show();
-          $("#institute_college_div").hide();
-          $("#institute_university_div").hide();
-          $("#board").parent().show();
-          $("#roll_no").parent().show();
-          $("#cgpa_marks_radio_row").hide();
-          $("#marks_div_row").show();
-          $("#cgpa_div_row").hide();
-          
-          if (code == "ssc") {
-            $("#result_status").val("complete");
-            $("#result_status").css({ "pointer-events": "none" });
-            $("#institute_school_div").show();
-            $("#institute_college_div").hide();
-            $("#institute_university_div").hide();
-            $("#board").parent().show();
-          } else if (code == "hssc") {
-            $("#result_status").val("");
-            $("#result_status").css({ "pointer-events": "" });
-            $("#institute_school_div").hide();
-            $("#institute_college_div").show();
-            $("#institute_university_div").hide();
-            $("#board").parent().show();
-          }
-          
-          // ✅ FIXED: For 14/16/18 years education - show CGPA by default
-          if (code == "ug-14" || code == "ug-16" || code == "grad-16" || code == "grad-18") {
-            $("#result_status").val("complete");
-            $("#result_status").css({ "pointer-events": "none" });
-            $("#institute_school_div").hide();
-            $("#institute_college_div").hide();
-            $("#institute_university_div").show();
-            $("#board").parent().show();
-            $("#roll_no").parent().show();
-            
-            // Show CGPA/Marks radio, default to CGPA
-            $("#cgpa_marks_radio_row").show();
-            $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
-            
-            // ✅ IMPORTANT: Hide marks row, show CGPA row
-            $("#marks_div_row").hide();
-            $("#cgpa_div_row").show();
-          }
-          
-          // For other degree levels (below 14 years but not SSC/HSSC)
-          if (code != "ssc" && code != "hssc" && code != "ug-14" && code != "ug-16" && code != "grad-16" && code != "grad-18") {
-            $("#result_status").css({ "pointer-events": "" });
-            $("#institute_school_div").hide();
-            $("#institute_college_div").hide();
-            $("#institute_university_div").show();
-          }
-        }
-      },
-    });
-  });
-  
-  // ===== MARKS/CGPA RADIO BUTTON HANDLER =====
-  $("input[name='marks_cgpa']").on("change", function () {
-    if ($(this).val() == "marks") {
-      // Marks selected
-      $("#marks_div_row").show();
-      $("#cgpa_div_row").hide();
-    } else {
-      // CGPA selected
-      $("#marks_div_row").hide();
-      $("#cgpa_div_row").show();
-    }
-  });
-  
-  // Sync institute field values before form submit
-$("#add_education_form").on("submit", function() {
-    var val = $("#institute_school").val() || $("#institute_college").val() || $("#institute_university").val() || "";
-    $("#institute_hidden").val(val);
-});
-  
-  // ===== DEGREE CHANGE HANDLER =====
-  $("#degree_id").on("change", function (e) {
-    $("#obtained_marks,#total_marks,#percentage").val("");
-    degree_id = $("#degree_id").val();
-    degree_name = $("#degree_id option:selected").text().trim();
-    
-    if (degree_name.match(/^o-?level$/i)) {
-      $("#result_status").parent().hide();
-      $("#board").parent().parent().hide();
-      $("#roll_no").parent().parent().hide();
-      $("#olevel_calculator_btn").show();
-      $("#alevel_calculator_btn").hide();
-      $("#obtained_marks").attr("readonly", "1");
-      $("#total_marks").attr("readonly", "1");
-    } else if (degree_name.match(/^a-?level$/i)) {
-      $("#result_status").parent().hide();
-      $("#board").parent().parent().hide();
-      $("#roll_no").parent().parent().hide();
-      $("#olevel_calculator_btn").hide();
-      $("#alevel_calculator_btn").show();
-      $("#obtained_marks").attr("readonly", "1");
-      $("#total_marks").attr("readonly", "1");
-    } else {
-      $("#result_status").parent().show();
-      $("#board").parent().parent().show();
-      $("#roll_no").parent().parent().show();
-      $("#olevel_calculator_btn").hide();
-      $("#alevel_calculator_btn").hide();
-      $("#obtained_marks").removeAttr("readonly");
-      $("#total_marks").removeAttr("readonly");
-    }
-    
-    if ($("#degree_level option:selected").attr("code").toLowerCase().trim() == "hssc") {
-      var formData = new FormData();
-      formData.append("degree_id", degree_id);
-      $.ajax({
-        url: "/degree/specializations/",
-        type: "POST",
-        dataType: "json",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (data) {
-          if (data.status == "noerror") {
-            $("#specialization_id").empty();
-            $("#specialization_id").append(
-              "<option selected='1' value=''>Select Specializations </option>"
-            );
-            for (j = 0; j < data.specializations.length; j++) {
-              $("#specialization_id").append(
-                "<option value=" + data.specializations[j].id +
-                ">" + data.specializations[j].name + "</option>"
-              );
-            }
-          }
-        },
-      });
-    }
-  });
-});
+<h2 style="color:white" class="float-left"> &#160;&#160;<t t-esc="step.name"/>
+
+</h2>
+</a>
+<a>
+<i id="angle_class4" class="fas fa-angle-down float-right p-0 m-0" style="font-size: 40px; cursor: pointer;color: white"/>
+</a>
+</div>
+<div id="collapse4" class="row container-fluid mt-2 collapse_div">
+<br/>
+<div class="col-10 ml-1">
+<div class="container-fluid mt-3 mb-3">
+<div class="table-responsive-sm">
+<table id="education_table" class="table table-md table-hover">
+<thead>
+<tr>
+<th class="col-auto" scope="col">Degree Name</th>
+<th class="col-auto" scope="col">Specialization</th>
+<th class="col-auto" scope="col">Institute</th>
+<th class="col-auto" scope="col">Percentage/CGPA</th>
+<th class="col-auto" scope="col">Result Status</th>
+<th class="col-auto" scope="col">Action</th>
+</tr>
+</thead>
+<tbody id="education_table_body">
+<t t-foreach="application_id.applicant_academic_ids.sorted(lambda x: x.year)" t-as="edu">
+<tr t-att-degree_level="edu.degree_level_id.name" t-att-id="edu.id">
+<input type="hidden" id="degree_level_id" t-att-value="edu.degree_level_id.id"/>
+<input type="hidden" id="roll_no_tab" t-att-value="edu.roll_no"/>
+<input type="hidden" id="degree_name" t-att-degree_name="edu.degree_name.name" t-att-value="edu.degree_name.id"/>
+<input type="hidden" id="group_specialization_name" t-att-group_specialization_name="edu.group_specialization.name" t-att-value="edu.group_specialization.id"/>
+<input type="hidden" id="board_tab" t-att-value="edu.board"/>
+<input type="hidden" id="institute_tab" t-att-value="edu.institute"/>
+<input type="hidden" id="tot_marks" t-att-value="edu.total_marks"/>
+<input type="hidden" id="obt_marks" t-att-value="edu.obt_marks"/>
+<input type="hidden" id="tot_cgpa" t-att-value="edu.total_cgpa"/>
+<input type="hidden" id="obt_cgpa" t-att-value="edu.obtained_cgpa"/>
+<input type="hidden" id="percentage_u" t-att-value="edu.percentage"/>
+<input type="hidden" id="year_edu" t-att-value="edu.year"/>
+<input type="hidden" id="sec_year_roll_no" t-att-value="edu.sec_year_roll_no"/>
+<input type="hidden" id="result_status_update_" t-att-value="edu.result_status"/>
+<td id="subject_marks_td" style="display:none">
+<t t-foreach="edu.applicant_subject_id" t-as="sub_mark">
+<input type="hidden" t-att-id="sub_mark.name.id" t-att-value="sub_mark.name.name" t-att-total_marks="sub_mark.total_marks" t-att-obtained_marks="sub_mark.obtained_marks"/>
+</t>
+</td>
+<td class="col-auto">
+<input type="text" readonly="1" class="form-control-plaintext col-auto" id="degree_val" t-att-value="edu.degree_name.name"/>
+</td>
+<td class="col-auto">
+<input type="text" readonly="1" class="form-control-plaintext col-auto" id="group_specialization_educ" t-att-value="edu.group_specialization.name"/>
+</td>
+<td class="col-auto">
+<input type="text" readonly="1" class="form-control-plaintext col-auto" id="institute_td" t-att-value="str(edu.institute) "/>
+</td>
+<td class="col-auto">
+<input type="text" readonly="1" class="form-control-plaintext col-auto" id="percentage_table" t-att-value="str(edu.percentage) + '%'"/>
+</td>
+<td class="col-auto">
+<input type="text" readonly="1" class="form-control-plaintext col-auto" id="result_status_table" t-att-value="dict(edu.fields_get(allfields=['result_status'])['result_status']['selection'])[edu.result_status]"/>
+</td>
+<td class="col-auto">
+<div class="row row container-fluid">
+<div class="col-4 mx-1" style="margin-right:25px;">
+<t t-if="application_id.state =='draft' or edu.result_status == 'waiting'">
+<a role="button" style="background-color: rgb(87, 42, 74);" id="education_update" t-att-value="edu.id" data-toggle="modal" data-target="#addeducation" data-whatever="@mdo" type="button" class="btn btn-outline-primary" onclick="update_education(this)">
+<i style="color: white;border:None" class="fa-solid fa-pen-to-square"/>
+</a>
+</t>
+</div>
+<div class="col-4">
+<button t-attf-style="{{'display:none' if application_id.state != 'draft' else '' }}" id="education_delete" t-att-value="edu.id" type="button" class="btn btn-outline-primary" onclick="delete_education(this)">
+<i t-attf-style="border:None;color:white; " class="fa-solid fa-trash"/>
+</button>
+</div>
+</div>
+</td>
+</tr>
+</t>
+</tbody>
+</table>
+<div class="mb-1 col-md-12 ml-2 mb-0">
+<hr class="mt-0 mb-0"/>
+</div>
+<t t-if="application_id.state=='draft'">
+<div class="form-check mt-2 ml-3">
+<label>In this section, please select your highest attained educational degree from the drop-down menu and provide the name of the institution where you earned this degree. Ensuring accuracy in your selection and providing the correct institution name will assist us in evaluating your qualifications appropriately.</label><br/>
+<input class="form-check-input" type="checkbox" value="" t-att-checked="application_id.education_consent" id="education_consent" name="education_consent"/>
+<label class="form-check-label" for="education_consent">I certify that the academic information provided above is accurate,
+complete and honestly presented by me. Misleading or incorrect information would result in refusal of admission at any stage.
+</label>
+</div>
+</t>
+</div>
+<div class="col-lg-2">
+<a class="collapse-item">
+<span class="btn btn-primary btn-sm" t-attf-style="background-color:#875A7B;border:None; {{'display:none' if application_id.state != 'draft' else '' }}" data-toggle="modal" onclick="add_education_check()" data-target="#addeducation" data-whatever="@mdo">Add Education</span>
+</a>
+</div>
+</div>
+</div>
+<div class="col-3">
+</div>
+</div>
+<br/>
+<!-- ============ ADD EDUCATION MODAL ============ -->
+<div class="modal fade" id="addeducation" tabindex="-1" role="dialog" aria-labelledby="addeducationLabel" aria-hidden="true">
+<div class="modal-dialog modal-xl" role="document">
+<div class="modal-content" style="box-shadow: inset 0 0 15px 1px gray;width:100%">
+<div style="background-color:#875A7B" class="modal-header">
+<h5 class="modal-title" id="addeducationLabel" style="color:white">Add/Update Education</h5>
+</div>
+<div class="modal-body">
+<div class="container">
+<form id="add_education_form" method="post">
+<input type="hidden" id="update_education_check" value="0"/>
+<input type="hidden" id="step_no_edu" name="step_no" t-att-value="counter_step"/>
+<input type="hidden" id="step_name_edu" name="step_name" value="education"/>
+<input type="hidden" id="application_id" t-att-value="application_id.id" name="application_id"/>
+<!-- Row 1: Degree Level, Degree, Specialization, Passing Year -->
+<div class="row">
+<div class="col-lg-3">
+<label style="color:black;font-weight:500;">Degree Level</label>
+<select class="form-control" required="1" id="degree_level" name="degree_level">
+<option value="" disabled="1" selected="1">Select Degree Level</option>
+<t t-foreach="academic_data" t-as="degree_level">
+<option t-att-code="degree_level.code" t-att-value="degree_level.id">
+<t t-esc="degree_level.name"/>
+</option>
+</t>
+</select>
+</div>
+<div class="col-lg-3">
+<label style="color:black;font-weight:500;">Degree</label>
+<select class="form-control" required="1" id="degree_id" name="degree">
+<option value="0" disabled="1" selected="1">Select Degree</option>
+</select>
+</div>
+<div class="col-lg-3">
+<label style="color:black;font-weight:500;">Specialization</label>
+<select class="form-control" id="specialization_id" name="specialization">
+<option value="" disabled="1" selected="1">Select Specialization</option>
+</select>
+</div>
+<div class="col-lg-3">
+<label style="color:black;font-weight:500;">Passing Year</label>
+<select class="form-control" id="year" name="passing_year">
+<option value="" disabled="1" selected="1">Select Passing Year</option>
+<t t-foreach="passing_year" t-as="pass_year">
+<option t-att-value="pass_year.name">
+<t t-esc="pass_year.name"/>
+</option>
+</t>
+</select>
+</div>
+</div>
+<!-- Row 2: Result Status, Roll No, Institute -->
+<div class="row mt-2">
+<input type="hidden" name="institute" id="institute_hidden" value=""/>
+<div class="col-lg-3">
+<label style="color:black;font-weight:500;">Result Status</label>
+<select class="form-control" required="1" id="result_status" name="result_status">
+<option value="" disabled="1" selected="1">Select Result Status</option>
+<option value="waiting">Waiting</option>
+<option value="complete">Declared</option>
+</select>
+</div>
+<div class="col-lg-3">
+<label style="color:black;font-weight:500;">Board Roll No.</label>
+<input class="form-control" required="0" type="text" name="roll_no" id="roll_no" placeholder="Enter Roll No"/>
+</div>
+<div class="col-lg-3">
+<label style="color:black;font-weight:500;">Board</label>
+<select class="form-control" id="board" name="board">
+<option disabled="1" selected="1" value="">Select Board</option>
+<t t-foreach="board_id" t-as="b">
+<option t-att-value="b.name">
+<t t-esc="b.name"/>
+</option>
+</t>
+</select>
+</div>
+<div class="col-lg-3">
+<label style="color:black;font-weight:500;">Exam Type</label>
+<div id="exam_type_div">
+<select class="form-control" id="exam_type" name="exam_type">
+<option value="">Select Exam Type</option>
+<option value="annual">Annual</option>
+<option value="supply">Supply</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Row 3: Institute (School / College / University) -->
+<div class="row mt-2">
+<div class="col-lg-4" id="institute_school_div">
+<label style="color:black;font-weight:500;">School</label>
+<input class="form-control" required="0" type="text" id="institute_school" placeholder="School Name"/>
+</div>
+<div class="col-lg-4" id="institute_college_div" style="display:none;">
+<label style="color:black;font-weight:500;">College</label>
+<input class="form-control" required="0" type="text" id="institute_college" placeholder="College Name"/>
+</div>
+<div class="col-lg-4" id="institute_university_div" style="display:none;">
+<label style="color:black;font-weight:500;">University / Institute</label>
+<input class="form-control" required="0" type="text" id="institute_university" placeholder="University Name"/>
+</div>
+<div class="col-lg-4" id="last_year_slip_div" style="display:none;">
+<label style="color:black;font-weight:500;">2nd Year Roll No. (Waiting Result)</label>
+<input class="form-control validate_number" type="text" name="roll_number_last" id="roll_number_last" placeholder="Enter 2nd Year Roll No"/>
+</div>
+</div>
+<hr/>
+<!-- CGPA vs Marks Radio Toggle -->
+<div class="row" id="cgpa_marks_radio_row" style="display:none;">
+<div class="col-12">
+<label style="font-weight:500;margin-right:20px;">
+<input type="radio" name="marks_cgpa" id="marks_radio" value="marks"/> Marks
+</label>
+<label style="font-weight:500;">
+<input type="radio" name="marks_cgpa" value="cgpa"/> CGPA
+</label>
+</div>
+</div>
+<!-- Marks Row (shown for SSC/HSSC and when Marks radio selected) -->
+<div class="row" id="marks_div_row">
+<div class="col-lg-4">
+<label id="total_marks_label" style="color:black;font-weight:500;">Total Marks:</label>
+<input class="form-control validate_number" type="number" name="total_marks" id="total_marks" placeholder="Total Marks"/>
+</div>
+<div class="col-lg-4">
+<label id="obtained_marks_label" style="color:black;font-weight:500;">Obtained Marks:</label>
+<input class="form-control validate_number" type="number" name="obtained_marks" id="obtained_marks" placeholder="Obtained Marks"/>
+</div>
+<div class="col-lg-4">
+<label style="color:black;font-weight:500;">Percentage (%)</label>
+<input class="form-control" readonly="1" type="text" name="percentage" id="percentage" placeholder="Auto calculated"/>
+</div>
+</div>
+<!-- CGPA Row (shown for Graduate+ when CGPA radio selected) -->
+<div class="row" id="cgpa_div_row" style="display:none;">
+<div class="col-lg-4">
+<label id="total_cgpa_label" style="color:black;font-weight:500;">Total CGPA:</label>
+<input class="form-control validate_number" type="number" step="0.01" name="total_cgpa" id="total_cgpa" placeholder="e.g. 4.0"/>
+</div>
+<div class="col-lg-4">
+<label id="obtained_cgpa_label" style="color:black;font-weight:500;">Obtained CGPA:</label>
+<input class="form-control validate_number" type="number" step="0.01" name="obtained_cgpa" id="obtained_cgpa" placeholder="e.g. 3.5"/>
+</div>
+<div class="col-lg-4">
+<label id="percentage_cgpa_label" style="color:black;font-weight:500;">Percentage (CGPA)</label>
+<input class="form-control" readonly="1" type="text" id="percentage_cgpa_val" placeholder="Auto calculated"/>
+</div>
+</div>
+<!-- O/A Level Calculator Buttons -->
+<div class="row mt-2">
+<div class="col-lg-12">
+<a role="button" id="olevel_calculator_btn" data-toggle="modal" data-target="#olevel_calculator" data-whatever="@mdo" class="btn btn-info btn-sm" style="display:none;">
+<i class="fas fa-calculator"/> O-Level Calculator
+</a>
+<a role="button" id="alevel_calculator_btn" data-toggle="modal" data-target="#alevel_calculator" data-whatever="@mdo" class="btn btn-info btn-sm" style="display:none;">
+<i class="fas fa-calculator"/> A-Level Calculator
+</a>
+</div>
+</div>
+<!-- Subjects Div (filled by JS) -->
+<div id="subject_div" class="row mt-2"></div>
+<!-- Degree Document Upload -->
+<div class="row mt-2">
+<div class="col-lg-6">
+<label style="color:black;font-weight:500;">Degree Document</label>
+<input class="form-control" type="file" id="degree_document" accept="image/*,.pdf"/>
+</div>
+</div>
+<input style="display:none;" type="submit" value="Add Education" class="btn btn-primary"/>
+
+<!-- Buttons moved INSIDE form -->
+<div class="row mt-3">
+<div class="col-12 text-right">
+<button onclick="document.getElementById('update_education_check').value=0;$('#degree_level').removeAttr('disabled');$('#degree_id').removeAttr('disabled'); document.getElementById('add_education_form').reset();" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+<!--<button onclick="check_form_validation(this)" class="btn btn-primary ml-1 color_scheme_class">Save</button> 
+<button type="button" onclick="submit_education_form()" class="btn btn-primary ml-1 color_scheme_class">Save</button>-->
+<button type="submit" class="btn btn-primary ml-1 color_scheme_class">Save</button>
+
+
+</div>
+</div>
+
+</form>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ============ O-LEVEL CALCULATOR MODAL ============ -->
+<div class="modal fade" id="olevel_calculator" tabindex="-1" role="dialog" aria-labelledby="olevel_calculatorLabel" aria-hidden="true">
+<div class="modal-dialog modal-sm" role="document">
+<div class="modal-content" style="box-shadow: inset 0 0 15px 1px gray;width:100%">
+<div style="background-color:#875A7B" class="modal-header">
+<h5 class="modal-title" id="olevel_calculatorLabel" style="color:white">Calculate O-Level Marks</h5>
+</div>
+<div class="modal-body">
+<div class="container">
+<form id="calculate_olevel">
+<t t-set="subject_olevel" t-value="['Subject 1','Subject 2','Subject 3','Subject 4','Subject 5','Subject 6','Subject 7','Subject 8','Subject 9','Subject 10']"/>
+<t t-foreach="subject_olevel" t-as="subject">
+<div class="col-lg-12">
+<div class="form-group">
+<span for="subject" class="form-label-norequired">
+<t t-esc="subject"/> Grade:</span>
+<select class="form-control" id="subject" name="subject">
+<option disabled="1" selected="1" value="0">Select Grade</option>
+<option value="90">A*</option>
+<option value="85">A</option>
+<option value="75">B</option>
+<option value="65">C</option>
+<option value="55">D</option>
+<option value="45">E</option>
+<option value="40">F (before June2010)</option>
+<option value="35">G (before June 2010)</option>
+</select>
+</div>
+</div>
+</t>
+<button type="submit" class="btn btn-primary ml-1">Calculate</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ============ A-LEVEL CALCULATOR MODAL ============ -->
+<div class="modal fade" id="alevel_calculator" tabindex="-1" role="dialog" aria-labelledby="alevel_calculatorLabel" aria-hidden="true">
+<div class="modal-dialog modal-md" role="document">
+<div class="modal-content" style="box-shadow: inset 0 0 15px 1px gray;width:100%">
+<div style="background-color:#875A7B" class="modal-header">
+<h5 class="modal-title" id="alevel_calculatorLabel" style="color:white">Calculate A-Level Marks</h5>
+</div>
+<div class="modal-body">
+<div class="container">
+<form id="calculate_alevel">
+<t t-set="subject_alevel1" t-value="['Subject 1','Subject 2','Subject 3','Subject 4','Subject 5','Subject 6','Subject 7','Subject 8','Subject 9','Subject 10']"/>
+<t t-set="subject_alevel2" t-value="['Subject 11','Subject 12','Subject 13','Subject 14']"/>
+<div class="row">
+<div class="col-lg-12">
+<h6 class="modal-title" style="color:purple;">O-Level Marks</h6>
+<hr style="height:2px"/>
+</div>
+</div>
+<div class="row">
+<t t-foreach="subject_alevel1" t-as="subject">
+<div class="col-lg-6">
+<div class="form-group">
+<span for="subject" class="form-label-norequired">
+<t t-esc="subject"/> Grade:</span>
+<select class="form-control" id="subject" name="subject">
+<option disabled="1" selected="1" value="0">Select Grade</option>
+<option value="90">A*</option>
+<option value="85">A</option>
+<option value="75">B</option>
+<option value="65">C</option>
+<option value="55">D</option>
+<option value="45">E</option>
+<option value="40">F (before June2010)</option>
+<option value="35">G (before June 2010)</option>
+</select>
+</div>
+</div>
+</t>
+<div class="col-lg-12">
+<h6 class="modal-title" style="color:purple;">A-Level Marks</h6>
+<hr style="height:2px"/>
+</div>
+<t t-foreach="subject_alevel2" t-as="subject">
+<div class="col-lg-6">
+<div class="form-group">
+<span for="subject" class="form-label-norequired">
+<t t-esc="subject"/> Grade:</span>
+<select class="form-control" id="subject" name="subject">
+<option disabled="1" selected="1" value="0">Select Grade</option>
+<option value="90">A*</option>
+<option value="85">A</option>
+<option value="75">B</option>
+<option value="65">C</option>
+<option value="55">D</option>
+<option value="45">E</option>
+<option value="40">F (before June2010)</option>
+<option value="35">G (before June 2010)</option>
+</select>
+</div>
+</div>
+</t>
+</div>
+<button type="submit" class="btn btn-primary ml-1">Calculate</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</template>
+</odoo>
