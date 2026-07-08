@@ -365,10 +365,17 @@ $(document).ready(function () {
   });
   
   // ===== RADIO BUTTON =====
+  
   $("input[name='marks_cgpa']").on("change", function () {
-    if ($(this).val() == "marks") { $("#marks_div_row").show(); $("#cgpa_div_row").hide(); } 
-    else { $("#marks_div_row").hide(); $("#cgpa_div_row").show(); }
+    if ($(this).val() == "marks") { 
+        $("#marks_div_row").show(); 
+        $("#cgpa_div_row").removeAttr('style').css('display', 'none');
+    } else { 
+        $("#marks_div_row").hide(); 
+        $("#cgpa_div_row").removeAttr('style').css('display', 'flex');
+    }
   });
+
   
   // ===== 🔥 THE FIX: AJAX SUBMIT HANDLER =====
   $("#add_education_form").on("submit", function (e) {
