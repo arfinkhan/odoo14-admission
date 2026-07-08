@@ -80,8 +80,8 @@ function check_subject_marks(param) {
 function result_status_change() {
   $("#roll_number_last").parent("div").hide();
   $("#last_year_slip").parent("div").hide();
-  $("#total_marks").siblings("span").html("Total Marks:");
-  $("#obtained_marks").siblings("span").html("Obtained Marks:");
+  $("#total_marks_label").text("Total Marks:");
+  $("#obtained_marks_label").text("Obtained Marks:");
   if (
     $("#degree_id option:selected").text().trim() == "Intermediate" ||
     $("#degree_id option:selected").text().trim() == "intermediate"
@@ -90,13 +90,13 @@ function result_status_change() {
       $("#roll_number_last").parent("div").show();
       $("#last_year_slip").parent("div").show();
       $("#roll_number_last").siblings("span").text("Second Year Board Roll No.");
-      $("#total_marks").siblings("span").html("First Year Total Marks:");
-      $("#obtained_marks").siblings("span").html("First Year Obtained Marks:");
+      $("#total_marks_label").text("First Year Total Marks:");
+      $("#obtained_marks_label").text("First Year Obtained Marks:");
     } else {
       $("#roll_number_last").parent("div").hide();
       $("#last_year_slip").parent("div").hide();
-      $("#total_marks").siblings("span").html("Total Marks:");
-      $("#obtained_marks").siblings("span").html("Obtained Marks:");
+      $("#total_marks_label").text("Total Marks:");
+      $("#obtained_marks_label").text("Obtained Marks:");
     }
   }
   if (
@@ -107,13 +107,13 @@ function result_status_change() {
       $("#roll_number_last").parent("div").show();
       $("#last_year_slip").parent("div").show();
       $("#roll_number_last").siblings("span").text("DAE Last Year Roll No.");
-      $("#total_marks").siblings("span").html("Second Year Total Marks:");
-      $("#obtained_marks").siblings("span").html("Second Year Obtained Marks:");
+      $("#total_marks_label").text("Second Year Total Marks:");
+      $("#obtained_marks_label").text("Second Year Obtained Marks:");
     } else {
       $("#roll_number_last").parent().hide();
       $("#last_year_slip").parent().hide();
-      $("#total_marks").siblings("span").html("Total Marks:");
-      $("#obtained_marks").siblings("span").html("Obtained Marks:");
+      $("#total_marks_label").text("Total Marks:");
+      $("#obtained_marks_label").text("Obtained Marks:");
     }
   }
 }
@@ -234,59 +234,48 @@ function update_education(param) {
   }
   degree_level_selected = $("#degree_level option:selected").attr("code").toLowerCase();
   if (degree_level_selected == "ssc") {
-    $("#institute_university").parent().hide();
-    $("#institute_college").parent().hide();
-    $("#institute_school").parent().show();
+    $("#institute_university_div").hide();
+    $("#institute_college_div").hide();
+    $("#institute_school_div").show();
     $("#institute_school").val(institue_tb);
     $("#cgpa_marks_radio_row").hide();
     $("#exam_type").show();
     $("#marks_div_row").show();
-    $("#total_cgpa").parent().hide();
-    $("#obtained_cgpa").parent().hide();
-    $("#percentage_cgpa").parent().parent().hide();
-    $("#total_marks").siblings("span").html("Total Marks:");
-    $("#obtained_marks").siblings("span").html("Obtained Marks:");
+    $("#cgpa_div_row").hide();
+    $("#total_marks_label").text("Total Marks:");
+    $("#obtained_marks_label").text("Obtained Marks:");
   } else if (degree_level_selected == "hssc") {
-    $("#institute_university").parent().hide();
-    $("#institute_college").parent().show();
+    $("#institute_university_div").hide();
+    $("#institute_college_div").show();
     $("#exam_type").show();
     $("#institute_college").val(institue_tb);
-    $("#institute_school").parent().hide();
+    $("#institute_school_div").hide();
     $("#cgpa_marks_radio_row").hide();
     $("#marks_div_row").show();
-    $("#total_cgpa").parent().hide();
-    $("#obtained_cgpa").parent().hide();
-    $("#percentage_cgpa").parent().parent().hide();
-    $("#total_marks").siblings("span").html("Total Marks:");
-    $("#obtained_marks").siblings("span").html("Obtained Marks:");
+    $("#cgpa_div_row").hide();
+    $("#total_marks_label").text("Total Marks:");
+    $("#obtained_marks_label").text("Obtained Marks:");
   } else {
-    $("#institute_university").parent().show();
-    $("#institute_college").parent().hide();
-    $("#institute_school").parent().hide();
-    $("#institute_school").parent().hide();
-    // ✅ FIX: Show Board & Roll No for university level too
+    $("#institute_university_div").show();
+    $("#institute_college_div").hide();
+    $("#institute_school_div").hide();
     $("#board").parent().show();
     $("#roll_no").parent().show();
     
     if (total_cgpa > 0 || obtained_cgpa > 0) {
       $("#cgpa_marks_radio_row").show();
       $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
-      $("#total_cgpa,#obtained_cgpa").parent().show();
       $("#marks_div_row").hide();
-      $("#percentage_cgpa").parent().parent().hide();
-      // ✅ CGPA labels
-      $("#total_marks").siblings("span").html("Total CGPA:");
-      $("#obtained_marks").siblings("span").html("Obtained CGPA:");
+      $("#cgpa_div_row").show();
+      $("#total_cgpa_label").text("Total CGPA:");
+      $("#obtained_cgpa_label").text("Obtained CGPA:");
     } else {
       $("#cgpa_marks_radio_row").show();
       $("input[name='marks_cgpa'][value='marks']").prop("checked", true);
       $("#marks_div_row").show();
-      $("#total_cgpa").parent().hide();
-      $("#obtained_cgpa").parent().hide();
-      $("#percentage_cgpa").parent().parent().hide();
-      // ✅ Marks labels
-      $("#total_marks").siblings("span").html("Total Marks:");
-      $("#obtained_marks").siblings("span").html("Obtained Marks:");
+      $("#cgpa_div_row").hide();
+      $("#total_marks_label").text("Total Marks:");
+      $("#obtained_marks_label").text("Obtained Marks:");
     }
   }
   $("#subject_div").empty();
@@ -337,16 +326,23 @@ function add_education_check() {
     $("#add_education_form").find(`#degree_level option:contains(${degree_leveladded})`).attr("disabled", "1");
   });
 }
+
+// =====================================================================
+// REPLACE EVERYTHING BELOW THIS LINE IN YOUR CURRENT FILE
+// =====================================================================
 $(document).ready(function () {
   // education details js
   $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
   $("#total_cgpa,#obtained_cgpa,#roll_number_last,#last_year_slip").parent().hide();
+  $("#cgpa_div_row").hide();
   if ($("#education_table").find("tbody tr").length < 1) {
     $("#education_table").hide();
   }
   $("#result_status").on("change", function () {
     result_status_change();
   });
+  
+  // ===== DEGREE LEVEL CHANGE HANDLER =====
   $("#degree_level").on("change", function (e) {
     val = $(this).val();
     if ($("#degree_level").val() == "") {
@@ -356,21 +352,19 @@ $(document).ready(function () {
     $("#degree_level").val(val);
     $("#subject_div").empty();
     $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
-    $("#percentage_cgpa").parent().parent().hide();
     $("#specialization_id").empty();
     $("#specialization_id").append(
       "<option selected='1' value=''>Select Specializations </option>"
     );
-    if (
-      $("#degree_level option:selected").attr("code").toLowerCase().trim() ==
-      "ssc" ||
-      $("#degree_level option:selected").attr("code").toLowerCase().trim() ==
-      "hssc"
-    ) {
+    
+    var code = $("#degree_level option:selected").attr("code").trim().toLowerCase();
+    
+    if (code == "ssc" || code == "hssc") {
       $("#specialization_id").parent().parent().show();
     } else {
       $("#specialization_id").parent().parent().hide();
     }
+    
     degree_level_id = $("#degree_level").val();
     var formData = new FormData();
     formData.append("degree_id", degree_level_id);
@@ -385,124 +379,99 @@ $(document).ready(function () {
         if (data.status == "noerror") {
           $("#degree_id").empty();
           $("#degree_id").append(
-            " <option selected='1' value='0'+ >Select Degree </option>"
+            " <option selected='1' value='0'>Select Degree </option>"
           );
           for (j = 0; j < data.degrees.length; j++) {
             $("#degree_id").append(
-              " <option code=" +
-              data.degrees[j].code +
-              " value=" +
-              data.degrees[j].id +
-              " > " +
-              data.degrees[j].name +
-              "</option>"
+              " <option code=" + data.degrees[j].code +
+              " value=" + data.degrees[j].id +
+              " > " + data.degrees[j].name + "</option>"
             );
           }
-          if (
-            $("#degree_level option:selected").attr("code").trim().toLowerCase() == "ssc"
-          ) {
+          
+          // Reset all visibility
+          $("#institute_school_div").show();
+          $("#institute_college_div").hide();
+          $("#institute_university_div").hide();
+          $("#board").parent().show();
+          $("#roll_no").parent().show();
+          $("#cgpa_marks_radio_row").hide();
+          $("#marks_div_row").show();
+          $("#cgpa_div_row").hide();
+          
+          if (code == "ssc") {
             $("#result_status").val("complete");
             $("#result_status").css({ "pointer-events": "none" });
-          } else {
+            $("#institute_school_div").show();
+            $("#institute_college_div").hide();
+            $("#institute_university_div").hide();
+            $("#board").parent().show();
+          } else if (code == "hssc") {
             $("#result_status").val("");
             $("#result_status").css({ "pointer-events": "" });
+            $("#institute_school_div").hide();
+            $("#institute_college_div").show();
+            $("#institute_university_div").hide();
+            $("#board").parent().show();
           }
-          // ✅ FIXED BLOCK: For 14/16/18 years education
-          if (
-            $("#degree_level option:selected").attr("code").trim() == "UG-14" ||
-            $("#degree_level option:selected").attr("code").trim() == "UG-16" ||
-            $("#degree_level option:selected").attr("code").trim() == "GRAD-16" ||
-            $("#degree_level option:selected").attr("code").trim() == "GRAD-18"
-          ) {
-            $("#cgpa_marks_radio_row").show();
+          
+          // ✅ FIXED: For 14/16/18 years education - show CGPA by default
+          if (code == "ug-14" || code == "ug-16" || code == "grad-16" || code == "grad-18") {
             $("#result_status").val("complete");
             $("#result_status").css({ "pointer-events": "none" });
-            
-            // ✅ FIX: Show Board & Roll No for all degree levels
+            $("#institute_school_div").hide();
+            $("#institute_college_div").hide();
+            $("#institute_university_div").show();
             $("#board").parent().show();
             $("#roll_no").parent().show();
             
-            $("#institute_university").parent().show();
-            $("#institute_college").parent().hide();
-            $("#institute_school").parent().hide();
-            
-            // ✅ Default to CGPA mode
+            // Show CGPA/Marks radio, default to CGPA
+            $("#cgpa_marks_radio_row").show();
             $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
-            $("#obtained_marks,#percentage,#total_marks").parent().hide();
-            $("#total_cgpa,#obtained_cgpa").parent().show();
-            $("#percentage_cgpa").parent().parent().hide();
-            // ✅ Update labels to CGPA
-            $("#total_marks").siblings("span").html("Total CGPA:");
-            $("#obtained_marks").siblings("span").html("Obtained CGPA:");
             
-          } else {
-            if (
-              $("#degree_level option:selected").attr("code").trim().toLowerCase() == "ssc"
-            ) {
-              $("#institute_school").parent().show();
-              $("#institute_college").parent().hide();
-              $("#institute_university").parent().hide();
-              $("#board").parent().show();
-              $("#exam_type").show();
-            } else if (
-              $("#degree_level option:selected").attr("code").trim().toLowerCase() == "hssc"
-            ) {
-              $("#institute_college").parent().show();
-              $("#institute_school").parent().hide();
-              $("#institute_university").parent().hide();
-              $("#exam_type").show();
-              $("#board").parent().show();
-            } else {
-              $("#institute_college").parent().hide();
-              $("#institute_school").parent().hide();
-              $("#board").parent().hide();
-              $("#institute_university").parent().show();
-            }
+            // ✅ IMPORTANT: Hide marks row, show CGPA row
+            $("#marks_div_row").hide();
+            $("#cgpa_div_row").show();
+          }
+          
+          // For other degree levels (below 14 years but not SSC/HSSC)
+          if (code != "ssc" && code != "hssc" && code != "ug-14" && code != "ug-16" && code != "grad-16" && code != "grad-18") {
             $("#result_status").css({ "pointer-events": "" });
-            $("#cgpa_marks_radio_row").hide();
-            $("#total_cgpa,#obtained_cgpa").parent().hide();
-            $("#obtained_marks,#total_marks,#roll_no,#percentage").parent().show();
-            // ✅ Reset labels to Marks
-            $("#total_marks").siblings("span").html("Total Marks:");
-            $("#obtained_marks").siblings("span").html("Obtained Marks:");
+            $("#institute_school_div").hide();
+            $("#institute_college_div").hide();
+            $("#institute_university_div").show();
           }
         }
       },
     });
   });
-  // --------------ending degree level ------------//
   
-  // ✅ FIXED: CGPA/Marks radio button change handler with label updates
+  // ===== MARKS/CGPA RADIO BUTTON HANDLER =====
   $("input[name='marks_cgpa']").on("change", function () {
-    if ($(this).val() != "marks") {
-      // CGPA selected
-      $("#obtained_marks,#percentage,#total_marks").parent().hide();
-      $("#total_cgpa,#obtained_cgpa").parent().show();
-      $("#percentage_cgpa").parent().parent().hide();
-      // ✅ Update labels to CGPA
-      $("#total_marks").siblings("span").html("Total CGPA:");
-      $("#obtained_marks").siblings("span").html("Obtained CGPA:");
-    } else {
+    if ($(this).val() == "marks") {
       // Marks selected
-      $("#obtained_marks,#total_marks,#percentage").parent().show();
-      $("#percentage_cgpa").parent().parent().hide();
-      $("#total_cgpa,#obtained_cgpa").parent().hide();
-      // ✅ Update labels to Marks
-      $("#total_marks").siblings("span").html("Total Marks:");
-      $("#obtained_marks").siblings("span").html("Obtained Marks:");
+      $("#marks_div_row").show();
+      $("#cgpa_div_row").hide();
+    } else {
+      // CGPA selected
+      $("#marks_div_row").hide();
+      $("#cgpa_div_row").show();
     }
   });
   
+  // Sync institute field values before form submit
+$("#add_education_form").on("submit", function() {
+    var val = $("#institute_school").val() || $("#institute_college").val() || $("#institute_university").val() || "";
+    $("#institute_hidden").val(val);
+});
+  
+  // ===== DEGREE CHANGE HANDLER =====
   $("#degree_id").on("change", function (e) {
     $("#obtained_marks,#total_marks,#percentage").val("");
     degree_id = $("#degree_id").val();
     degree_name = $("#degree_id option:selected").text().trim();
-    if (
-      degree_name == "O-Level" ||
-      degree_name == "olevel" ||
-      degree_name == "o-level" ||
-      degree_name == "OLEVEL"
-    ) {
+    
+    if (degree_name.match(/^o-?level$/i)) {
       $("#result_status").parent().hide();
       $("#board").parent().parent().hide();
       $("#roll_no").parent().parent().hide();
@@ -510,12 +479,7 @@ $(document).ready(function () {
       $("#alevel_calculator_btn").hide();
       $("#obtained_marks").attr("readonly", "1");
       $("#total_marks").attr("readonly", "1");
-    } else if (
-      degree_name == "A-Level" ||
-      degree_name == "alevel" ||
-      degree_name == "a-level" ||
-      degree_name == "ALEVEL"
-    ) {
+    } else if (degree_name.match(/^a-?level$/i)) {
       $("#result_status").parent().hide();
       $("#board").parent().parent().hide();
       $("#roll_no").parent().parent().hide();
@@ -532,9 +496,8 @@ $(document).ready(function () {
       $("#obtained_marks").removeAttr("readonly");
       $("#total_marks").removeAttr("readonly");
     }
-    if (
-      $("#degree_level option:selected").attr("code").toLowerCase().trim() == "hssc"
-    ) {
+    
+    if ($("#degree_level option:selected").attr("code").toLowerCase().trim() == "hssc") {
       var formData = new FormData();
       formData.append("degree_id", degree_id);
       $.ajax({
@@ -552,11 +515,8 @@ $(document).ready(function () {
             );
             for (j = 0; j < data.specializations.length; j++) {
               $("#specialization_id").append(
-                "<option value=" +
-                data.specializations[j].id +
-                ">" +
-                data.specializations[j].name +
-                "</option>"
+                "<option value=" + data.specializations[j].id +
+                ">" + data.specializations[j].name + "</option>"
               );
             }
           }
