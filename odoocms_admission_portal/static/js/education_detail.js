@@ -21,8 +21,8 @@ function delete_education(param) {
           $(".preference_input_no").remove();
           if (preferences_allowed > 0) {
             for (var i = 0; i < preferences_allowed; i++) {
-              input = `<input  class="form-control preference_input_no" type="text" placeholder='Preference No ${i + 1
-                }'  />`;
+              input = `<input class="form-control preference_input_no" type="text" placeholder='Preference No ${i + 1
+                }' />`;
               $("#prefer_div").append(input);
             }
           }
@@ -30,12 +30,12 @@ function delete_education(param) {
       }
       $(param).parents("tr").remove();
       $("#add_education_form").find(`#degree_level option`).each(function (index, element) {
-          $(element).removeAttr("disabled");
-        });
+        $(element).removeAttr("disabled");
+      });
       $("#education_table_body").find("tr").each(function (index, element) {
-          degree_leveladded = $(element).attr("degree_level");
-          $("#add_education_form").find(`#degree_level option:contains(${degree_leveladded})`).attr("disabled", "1");
-        });
+        degree_leveladded = $(element).attr("degree_level");
+        $("#add_education_form").find(`#degree_level option:contains(${degree_leveladded})`).attr("disabled", "1");
+      });
     });
   }
 }
@@ -59,8 +59,8 @@ function prepare_subject(param) {
       if (all_selected_option.includes(element_value)) {
       } else {
         $(".subject_main_div").find("select").find(`option[value=${element_value}]`).each(function (index, el) {
-            $(el).removeAttr("disabled");
-          });
+          $(el).removeAttr("disabled");
+        });
       }
     }
   });
@@ -69,7 +69,6 @@ function prepare_subject(param) {
 }
 function check_subject_marks(param) {
   // this function is used to check obtained_marks less then total marks of subject
-
   const obtained_marks = $(param).parents(".subject_main_div").find("input[name='subj_marks']").val();
   const total_marks = $(param).parents(".subject_main_div").find("input[name='subj_total_marks']").val();
   if (obtained_marks != "" && total_marks != "") {
@@ -81,8 +80,8 @@ function check_subject_marks(param) {
 function result_status_change() {
   $("#roll_number_last").parent("div").hide();
   $("#last_year_slip").parent("div").hide();
-  $("#total_marks").siblings("span").text("Total Marks");
-  $("#obtained_marks").siblings("span").text("Obtained Marks");
+  $("#total_marks").siblings("span").html("Total Marks:");
+  $("#obtained_marks").siblings("span").html("Obtained Marks:");
   if (
     $("#degree_id option:selected").text().trim() == "Intermediate" ||
     $("#degree_id option:selected").text().trim() == "intermediate"
@@ -91,13 +90,13 @@ function result_status_change() {
       $("#roll_number_last").parent("div").show();
       $("#last_year_slip").parent("div").show();
       $("#roll_number_last").siblings("span").text("Second Year Board Roll No.");
-      $("#total_marks").siblings("span").text("First Year Total Marks");
-      $("#obtained_marks").siblings("span").text("First Year Obtained Marks");
+      $("#total_marks").siblings("span").html("First Year Total Marks:");
+      $("#obtained_marks").siblings("span").html("First Year Obtained Marks:");
     } else {
       $("#roll_number_last").parent("div").hide();
       $("#last_year_slip").parent("div").hide();
-      $("#total_marks").siblings("span").text("Total Marks");
-      $("#obtained_marks").siblings("span").text("Obtained Marks");
+      $("#total_marks").siblings("span").html("Total Marks:");
+      $("#obtained_marks").siblings("span").html("Obtained Marks:");
     }
   }
   if (
@@ -108,13 +107,13 @@ function result_status_change() {
       $("#roll_number_last").parent("div").show();
       $("#last_year_slip").parent("div").show();
       $("#roll_number_last").siblings("span").text("DAE Last Year Roll No.");
-      $("#total_marks").siblings("span").text("Second Year Total Marks");
-      $("#obtained_marks").siblings("span").text("Second Year Obtained Marks");
+      $("#total_marks").siblings("span").html("Second Year Total Marks:");
+      $("#obtained_marks").siblings("span").html("Second Year Obtained Marks:");
     } else {
       $("#roll_number_last").parent().hide();
       $("#last_year_slip").parent().hide();
-      $("#total_marks").siblings("span").text("Total Marks");
-      $("#obtained_marks").siblings("span").text("Obtained Marks");
+      $("#total_marks").siblings("span").html("Total Marks:");
+      $("#obtained_marks").siblings("span").html("Obtained Marks:");
     }
   }
 }
@@ -132,7 +131,6 @@ function update_education(param) {
   institue_tb = $(param).parents("tr").find("#institute_tab").val();
   board_tb = $(param).parents("tr").find("#board_tab").val();
   specialization = `<option value="${$(param).parents("tr").find("#group_specialization_name").val()}" selected='1'>${$(param).parents("tr").find("#group_specialization_name").attr("group_specialization_name")}</option>`;
-
   $("#update_education_check").val(1);
   $("#degree_level").val($(param).parents("tr").find("#degree_level_id").val());
   $("#degree_level").trigger("change");
@@ -154,7 +152,6 @@ function update_education(param) {
   );
   $("#roll_no").val(roll_no);
   $("#board").val(board_tb);
-
   degree_id = $("#degree_id").val();
   degree_name = $("#degree_id option:selected").text().trim();
   if (
@@ -189,7 +186,6 @@ function update_education(param) {
     $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
     $("#obtained_marks,#total_marks").removeAttr("readonly");
   }
-
   degree_level_code = $("#degree_level option:selected").attr("code").toLowerCase().trim();
   if (degree_level_code == "ssc" || degree_level_code == "hssc") {
     var formData = new FormData();
@@ -236,7 +232,6 @@ function update_education(param) {
   } else {
     $("#specialization_id").parent().parent().hide();
   }
-
   degree_level_selected = $("#degree_level option:selected").attr("code").toLowerCase();
   if (degree_level_selected == "ssc") {
     $("#institute_university").parent().hide();
@@ -249,6 +244,8 @@ function update_education(param) {
     $("#total_cgpa").parent().hide();
     $("#obtained_cgpa").parent().hide();
     $("#percentage_cgpa").parent().parent().hide();
+    $("#total_marks").siblings("span").html("Total Marks:");
+    $("#obtained_marks").siblings("span").html("Obtained Marks:");
   } else if (degree_level_selected == "hssc") {
     $("#institute_university").parent().hide();
     $("#institute_college").parent().show();
@@ -260,29 +257,38 @@ function update_education(param) {
     $("#total_cgpa").parent().hide();
     $("#obtained_cgpa").parent().hide();
     $("#percentage_cgpa").parent().parent().hide();
+    $("#total_marks").siblings("span").html("Total Marks:");
+    $("#obtained_marks").siblings("span").html("Obtained Marks:");
   } else {
     $("#institute_university").parent().show();
-    $("#institute_university").val(institue_tb);
     $("#institute_college").parent().hide();
     $("#institute_school").parent().hide();
     $("#institute_school").parent().hide();
-    $("#board").parent().hide();
-    $("#roll_no").parent().hide();
-    if (total_cgpa > 0) {
+    // ✅ FIX: Show Board & Roll No for university level too
+    $("#board").parent().show();
+    $("#roll_no").parent().show();
+    
+    if (total_cgpa > 0 || obtained_cgpa > 0) {
       $("#cgpa_marks_radio_row").show();
-      $("#total_cgpa").parent().show();
-      $("#obtained_cgpa").parent().show();
-      $("#percentage_cgpa").parent().parent().hide();
+      $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
+      $("#total_cgpa,#obtained_cgpa").parent().show();
       $("#marks_div_row").hide();
+      $("#percentage_cgpa").parent().parent().hide();
+      // ✅ CGPA labels
+      $("#total_marks").siblings("span").html("Total CGPA:");
+      $("#obtained_marks").siblings("span").html("Obtained CGPA:");
     } else {
-      $("#cgpa_marks_radio_row").hide();
+      $("#cgpa_marks_radio_row").show();
+      $("input[name='marks_cgpa'][value='marks']").prop("checked", true);
       $("#marks_div_row").show();
       $("#total_cgpa").parent().hide();
       $("#obtained_cgpa").parent().hide();
       $("#percentage_cgpa").parent().parent().hide();
+      // ✅ Marks labels
+      $("#total_marks").siblings("span").html("Total Marks:");
+      $("#obtained_marks").siblings("span").html("Obtained Marks:");
     }
   }
-
   $("#subject_div").empty();
   if (
     $(param).parents("tr").find("#subject_marks_td").find("input").length > 0
@@ -291,31 +297,30 @@ function update_education(param) {
     $("#subject_div").append("<hr/>");
     selection_div = `<select required='1' id='selected_subject'>${selection_subjects}</select>`;
     var selection_subjects =
-      "'<option selected='1'  value=''>Select Subject</option>'";
+      "'<option selected='1' value=''>Select Subject</option>'";
     $(param).parents("tr").find("#subject_marks_td").find("input").each(function (index, element) {
-        sub_name = $(element).attr("value");
-        tot_marks = $(element).attr("total_marks");
-        obt_marks = $(element).attr("obtained_marks");
-        selection_subjects += `<option selected='1' value='${$(element).attr(
-          "id"
-        )}'> ${$(element).attr("value")}</option>`;
-
-        str = `<div  class='subject_main_div row' id ='${element.id}'>
-            <div id='select_marks_div' class="col-md-2 mt-2 px-0">
-            <select onchange='prepare_subject(this)' required='1' class='form-control' name='selected_subject' id='selected_subject'>${selection_subjects}</select>
-            </div>
-            <div class="col-lg-4 mt-1">
-            <input onchange='check_subject_marks(this)' maxlength='4' class="form-control subj_marks validate_number" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 13)" placeholder='Obtained Marks' required='1' type="text" value='${tot_marks}' name="subj_marks" id="${element.name}_marks" />
-            </div>
-            <div class="col-lg-5 mt-1">
-            <input class="form-control subject_total_marks validate_number" maxlength='4' onchange='check_subject_marks(this)' onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 13)" placeholder='Total  Marks' required='1' type="text" value='${obt_marks}' name="subj_total_marks" id="${element.name}_total_marks" />
-            </div>
-            </div>
-            `;
-        $("#subject_div").append(str);
-        selection_subjects =
-          "'<option selected='1'  value=''>Select Subject</option>'";
-      });
+      sub_name = $(element).attr("value");
+      tot_marks = $(element).attr("total_marks");
+      obt_marks = $(element).attr("obtained_marks");
+      selection_subjects += `<option selected='1' value='${$(element).attr(
+        "id"
+      )}'> ${$(element).attr("value")}</option>`;
+      str = `<div class='subject_main_div row' id ='${element.id}'>
+<div id='select_marks_div' class="col-md-2 mt-2 px-0">
+<select onchange='prepare_subject(this)' required='1' class='form-control' name='selected_subject' id='selected_subject'>${selection_subjects}</select>
+</div>
+<div class="col-lg-4 mt-1">
+<input onchange='check_subject_marks(this)' maxlength='4' class="form-control subj_marks validate_number" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 13)" placeholder='Obtained Marks' required='1' type="text" value='${tot_marks}' name="subj_marks" id="${element.name}_marks" />
+</div>
+<div class="col-lg-5 mt-1">
+<input class="form-control subject_total_marks validate_number" maxlength='4' onchange='check_subject_marks(this)' onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 13)" placeholder='Total Marks' required='1' type="text" value='${obt_marks}' name="subj_total_marks" id="${element.name}_total_marks" />
+</div>
+</div>
+`;
+      $("#subject_div").append(str);
+      selection_subjects =
+        "'<option selected='1' value=''>Select Subject</option>'";
+    });
   }
 }
 function add_education_check() {
@@ -325,14 +330,13 @@ function add_education_check() {
   $("#degree_level").removeAttr("disabled");
   $("#degree_id").removeAttr("disabled");
   $("#add_education_form").find(`#degree_level option`).each(function (index, element) {
-      $(element).removeAttr("disabled");
-    });
+    $(element).removeAttr("disabled");
+  });
   $("#education_table_body").find("tr").each(function (index, element) {
-      degree_leveladded = $(element).attr("degree_level");
-      $("#add_education_form").find(`#degree_level option:contains(${degree_leveladded})`).attr("disabled", "1");
-    });
+    degree_leveladded = $(element).attr("degree_level");
+    $("#add_education_form").find(`#degree_level option:contains(${degree_leveladded})`).attr("disabled", "1");
+  });
 }
-
 $(document).ready(function () {
   // education details js
   $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
@@ -343,14 +347,12 @@ $(document).ready(function () {
   $("#result_status").on("change", function () {
     result_status_change();
   });
-
   $("#degree_level").on("change", function (e) {
     val = $(this).val();
     if ($("#degree_level").val() == "") {
       return false;
     }
     document.getElementById("add_education_form").reset();
-
     $("#degree_level").val(val);
     $("#subject_div").empty();
     $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
@@ -359,7 +361,6 @@ $(document).ready(function () {
     $("#specialization_id").append(
       "<option selected='1' value=''>Select Specializations </option>"
     );
-
     if (
       $("#degree_level option:selected").attr("code").toLowerCase().trim() ==
       "ssc" ||
@@ -370,7 +371,6 @@ $(document).ready(function () {
     } else {
       $("#specialization_id").parent().parent().hide();
     }
-
     degree_level_id = $("#degree_level").val();
     var formData = new FormData();
     formData.append("degree_id", degree_level_id);
@@ -407,51 +407,34 @@ $(document).ready(function () {
             $("#result_status").val("");
             $("#result_status").css({ "pointer-events": "" });
           }
-
+          // ✅ FIXED BLOCK: For 14/16/18 years education
           if (
             $("#degree_level option:selected").attr("code").trim() == "UG-14" ||
             $("#degree_level option:selected").attr("code").trim() == "UG-16" ||
-            $("#degree_level option:selected").attr("code").trim() ==
-            "GRAD-16" ||
+            $("#degree_level option:selected").attr("code").trim() == "GRAD-16" ||
             $("#degree_level option:selected").attr("code").trim() == "GRAD-18"
           ) {
             $("#cgpa_marks_radio_row").show();
             $("#result_status").val("complete");
-            $("#board").parent().hide();
-            $("#roll_no").parent().hide();
             $("#result_status").css({ "pointer-events": "none" });
-            if ($("input[name='marks_cgpa']:checked").val() != "marks") {
-              $("#percentage_cgpa").parent().parent().hide();
-              $("#institute_university").parent().show();
-              $("#institute_college").parent().hide();
-              $("#institute_school").parent().hide();
-              $("#obtained_marks").parent().hide();
-              $("#percentage").parent().hide();
-              $("#total_marks").parent().hide();
-              if (
-                $("#degree_level option:selected").attr("code").trim() ==
-                "GRAD-16"
-              ) {
-                $("#marks_radio").parent().hide();
-              } else {
-                $("#marks_radio").parent().show();
-              }
-              $("#total_cgpa").parent().show();
-              $("#obtained_cgpa").parent().show();
-              $("#percentage_cgpa").parent().parent().hide();
-              // $('#percentage').show();
-            } else {
-              $("#percentage_cgpa").parent().parent().show();
-              $("#institute_university").parent().show();
-              $("#institute_college").parent().hide();
-              $("#institute_school").parent().hide();
-              $("#obtained_marks").parent().show();
-              $("#percentage").parent().show();
-              $("#total_marks").parent().show();
-              $("#total_cgpa").parent().hide();
-              $("#obtained_cgpa").parent().hide();
-              $("#percentage_cgpa").parent().parent().show();
-            }
+            
+            // ✅ FIX: Show Board & Roll No for all degree levels
+            $("#board").parent().show();
+            $("#roll_no").parent().show();
+            
+            $("#institute_university").parent().show();
+            $("#institute_college").parent().hide();
+            $("#institute_school").parent().hide();
+            
+            // ✅ Default to CGPA mode
+            $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
+            $("#obtained_marks,#percentage,#total_marks").parent().hide();
+            $("#total_cgpa,#obtained_cgpa").parent().show();
+            $("#percentage_cgpa").parent().parent().hide();
+            // ✅ Update labels to CGPA
+            $("#total_marks").siblings("span").html("Total CGPA:");
+            $("#obtained_marks").siblings("span").html("Obtained CGPA:");
+            
           } else {
             if (
               $("#degree_level option:selected").attr("code").trim().toLowerCase() == "ssc"
@@ -479,56 +462,47 @@ $(document).ready(function () {
             $("#cgpa_marks_radio_row").hide();
             $("#total_cgpa,#obtained_cgpa").parent().hide();
             $("#obtained_marks,#total_marks,#roll_no,#percentage").parent().show();
+            // ✅ Reset labels to Marks
+            $("#total_marks").siblings("span").html("Total Marks:");
+            $("#obtained_marks").siblings("span").html("Obtained Marks:");
           }
         }
       },
     });
   });
   // --------------ending degree level ------------//
-
-  // if ($('#degree_level option:selected').attr('code').trim()=='UG-16' || $('#degree_level option:selected').attr('code').trim()=='GRAD-16'|| $('#degree_level option:selected').attr('code').trim()=='GRAD-18') {
-  //     $('#cgpa_marks_radio_row').show()
-
-  //     if ($("input[name='marks_cgpa']:checked").val() != 'marks') {
-  //         $('#obtained_marks').parent().hide();
-  //         $('#percentage').parent().hide();
-  //         $('#total_marks').parent().hide();
-  //         $('#total_cgpa').parent().show();
-  //         $('#obtained_cgpa').parent().show();
-
-  //     } else {
-  //         $('#obtained_marks').parent().show();
-  //         $('#percentage').parent().show();
-  //         $('#total_marks').parent().show();
-  //         $('#total_cgpa').parent().hide();
-  //         $('#obtained_cgpa').parent().hide();
-
-  //     }
-  // }
-
+  
+  // ✅ FIXED: CGPA/Marks radio button change handler with label updates
   $("input[name='marks_cgpa']").on("change", function () {
     if ($(this).val() != "marks") {
-      $("#percentage_cgpa").parent().parent().hide();
+      // CGPA selected
       $("#obtained_marks,#percentage,#total_marks").parent().hide();
       $("#total_cgpa,#obtained_cgpa").parent().show();
+      $("#percentage_cgpa").parent().parent().hide();
+      // ✅ Update labels to CGPA
+      $("#total_marks").siblings("span").html("Total CGPA:");
+      $("#obtained_marks").siblings("span").html("Obtained CGPA:");
     } else {
+      // Marks selected
       $("#obtained_marks,#total_marks,#percentage").parent().show();
       $("#percentage_cgpa").parent().parent().hide();
       $("#total_cgpa,#obtained_cgpa").parent().hide();
+      // ✅ Update labels to Marks
+      $("#total_marks").siblings("span").html("Total Marks:");
+      $("#obtained_marks").siblings("span").html("Obtained Marks:");
     }
   });
+  
   $("#degree_id").on("change", function (e) {
     $("#obtained_marks,#total_marks,#percentage").val("");
     degree_id = $("#degree_id").val();
     degree_name = $("#degree_id option:selected").text().trim();
-
     if (
       degree_name == "O-Level" ||
       degree_name == "olevel" ||
       degree_name == "o-level" ||
       degree_name == "OLEVEL"
     ) {
-      // $('#specialization_id').parent().parent().hide()
       $("#result_status").parent().hide();
       $("#board").parent().parent().hide();
       $("#roll_no").parent().parent().hide();
@@ -558,14 +532,9 @@ $(document).ready(function () {
       $("#obtained_marks").removeAttr("readonly");
       $("#total_marks").removeAttr("readonly");
     }
-
     if (
-      $("#degree_level option:selected").attr("code").toLowerCase().trim() ==
-      "ssc" ||
-      $("#degree_level option:selected").attr("code").toLowerCase().trim() ==
-      "hssc"
+      $("#degree_level option:selected").attr("code").toLowerCase().trim() == "hssc"
     ) {
-      $("#specialization_id").parent().parent().show();
       var formData = new FormData();
       formData.append("degree_id", degree_id);
       $.ajax({
@@ -576,7 +545,6 @@ $(document).ready(function () {
         contentType: false,
         processData: false,
         success: function (data) {
-          result_status_change();
           if (data.status == "noerror") {
             $("#specialization_id").empty();
             $("#specialization_id").append(
@@ -594,350 +562,6 @@ $(document).ready(function () {
           }
         },
       });
-    } else {
-      $("#specialization_id").parent().parent().hide();
     }
-  });
-  $("#specialization_id").on("change", function (e) {
-    specialization_id = $("#specialization_id option:selected").val();
-    if (specialization_id == "") {
-      $("#subject_div").hide();
-      $(".subject_div").empty();
-      return false;
-    }
-    var formData = new FormData();
-    formData.append("specialization_id", specialization_id);
-    $.ajax({
-      url: "/degree/specializations/subjects",
-      type: "POST",
-      dataType: "json",
-      data: formData,
-      contentType: false,
-      processData: false,
-      success: function (data) {
-        if (data.status == "noerror") {
-          if (data.specializations_subject.length > 0) {
-            selection_subjects =
-              "'<option selected='1'  value=''>Select Subject</option>'";
-            for (j = 0; j < data.specializations_subject.length; j++) {
-              if (data.specializations_subject[j].name) {
-                selection_subjects =
-                  selection_subjects +
-                  `<option value='${data.specializations_subject[j].id}'>${data.specializations_subject[j].name}</option>`;
-              }
-            }
-            selection_div = `<select required='1' id='selected_subject'>${selection_subjects}</select>`;
-            for (j = 0; j < 3; j++) {
-              if (j == 0) {
-                $("#subject_div").empty();
-                $("#subject_div").append("<h3>Subjects Details</h3>");
-                $("#subject_div").append("<hr/>");
-              }
-              if (data.specializations_subject[j].name) {
-                str = `<div class='subject_main_div row' id = '${data.specializations_subject[j].id}' >
-                            <div id='select_marks_div' class="col-md-2 mt-2 px-0">
-                            <select onchange='prepare_subject(this)' required='1' class='form-control' name='selected_subject' id='selected_subject'>${selection_subjects}</select>
-                            </div>
-                            <div class="col-lg-4 mt-1">
-                            <input onchange='check_subject_marks(this)' maxlength='4' class="form-control subj_marks validate_number" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 13)" placeholder='Obtained Marks' required='1' type="text" name="subj_marks" id="${data.specializations_subject[j].name}_marks" />
-                            </div>
-                            <div class="col-lg-5 mt-1">
-                            <input class="form-control subject_total_marks validate_number" maxlength='4' onchange='check_subject_marks(this)' onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 13)" placeholder='Total  Marks' required='1' type="text" name="subj_total_marks" id="${data.specializations_subject[j].name}_total_marks" />
-                            </div>
-                            </div>
-                            `;
-                $("#subject_div").append(str);
-              }
-            }
-            $("#subject_div").append("<br/><hr class='mt-2' />");
-            $("#subject_div").show();
-          } else {
-            $("#subject_div").hide();
-            $("#subject_div").empty();
-            return false;
-          }
-        }
-      },
-    });
-  });
-
-  $("#obtained_marks,#total_marks").on("change", function () {
-    if ($("#obtained_marks").val() > 0) {
-      if (
-        parseFloat($("#obtained_marks").val()) >
-        parseFloat($("#total_marks").val())
-      ) {
-        $("#obtained_marks").val("");
-        $("#percentage").val("");
-      } else {
-        var percentage =
-          (parseFloat($("#obtained_marks").val()) /
-            parseFloat($("#total_marks").val())) *
-          100;
-        $("#percentage").val(percentage.toFixed(2));
-      }
-    }
-  });
-  $("#obtained_cgpa,#total_cgpa").on("change", function () {
-    if ($("#obtained_cgpa").parent().val() > 0) {
-      if (
-        parseFloat($("#obtained_cgpa").parent().val()) >
-        parseFloat($("#total_cgpa").parent().val())
-      ) {
-        $("#obtained_cgpa").parent().val("");
-      }
-    }
-  });
-  $("#obtained_marks_update,#total_marks_update").on("change", function () {
-    if ($("#obtained_marks_update").val() > 0) {
-      if (
-        parseFloat($("#obtained_marks_update").val()) >
-        parseFloat($("#total_marks_update").val())
-      ) {
-        $("#obtained_marks_update").val("");
-        $("#percentage_update").val("");
-      } else {
-        var percentage =
-          (parseFloat($("#obtained_marks_update").val()) /
-            parseFloat($("#total_marks_update").val())) *
-          100;
-        $("#percentage_update").val(Math.round(percentage).toFixed(2));
-      }
-    }
-  });
-  $("#add_education_form").submit(function (e) {
-    e.preventDefault();
-    var marks_data = $("#subject_div").find(".subject_main_div");
-    data = {};
-    if ($("#subject_div").find(".subject_main_div").length > 1) {
-      marks_data.each(function (index, element) {
-        var subject_id = $(element).attr("id");
-        marks = $(element).find("input");
-        subject_data = {};
-        $(marks).each(function (index, element) {
-          subject_data[$(element).attr("name")] = $(element).val();
-        });
-        data[subject_id] = JSON.stringify(subject_data);
-      });
-    }
-
-    var formData = new FormData();
-    var degree_document = document.getElementById("degree_document");
-    degree_file = degree_document.files[0];
-    var last_year_slip_file = "";
-    if ($("#last_year_slip").parent().is(":visible")) {
-      var last_year_slip = document.getElementById("last_year_slip");
-      last_year_slip_file = last_year_slip.files[0];
-    }
-    formData.append("last_year_slip_file", last_year_slip_file);
-    formData.append("degree_file", degree_file);
-    formData.append(
-      "update_education_check",
-      $("#update_education_check").val()
-    );
-    formData.append("step_no", $("#step_no_edu").val());
-    formData.append("exam_type", $("#exam_type").val());
-    formData.append("step_name", $("#step_name_edu").val());
-    formData.append("roll_number_last", $("#roll_number_last").val());
-    formData.append("degree_level", $("#degree_level option:selected").val());
-    formData.append("degree", $("#degree_id").val());
-    formData.append("specialization", $("#specialization_id").val());
-    formData.append("passing_year", $("#year").val());
-    if (
-      $("#degree_level option:selected").attr("code").trim() == "UG-14" ||
-      $("#degree_level option:selected").attr("code").trim() == "UG-16" ||
-      $("#degree_level option:selected").attr("code").trim() == "GRAD-16" ||
-      $("#degree_level option:selected").attr("code").trim() == "GRAD-18"
-    ) {
-      if ($("input[name='marks_cgpa']:checked").val() == "marks") {
-        formData.append("total_marks", $("#total_marks").val());
-        formData.append("obtained_marks", $("#obtained_marks").val());
-        formData.append("percentage", $("#percentage").val());
-      } else {
-        formData.append("obtained_cgpa", $("#obtained_cgpa").val());
-        formData.append("total_cgpa", $("#total_cgpa").val());
-      }
-      formData.append("institute", $("#institute_university").val());
-    } else {
-      if (
-        $("#degree_level option:selected").attr("code").trim().toLowerCase() ==
-        "ssc"
-      ) {
-        formData.append("institute", $("#institute_school").val());
-      } else if (
-        $("#degree_level option:selected").attr("code").trim().toLowerCase() ==
-        "hssc"
-      ) {
-        formData.append("institute", $("#institute_college").val());
-      } else {
-        formData.append("institute", $("#institute_university").val());
-      }
-      formData.append("board", $("#board").val());
-      formData.append("roll_no", $("#roll_no").val());
-      formData.append("total_marks", $("#total_marks").val());
-      formData.append("obtained_marks", $("#obtained_marks").val());
-      formData.append("percentage", $("#percentage").val());
-    }
-
-    formData.append("result_status", $("#result_status option:selected").val());
-    if ($("#subject_div").find(".subject_main_div").length > 1) {
-      formData.append("subject_marks", JSON.stringify(data));
-    }
-
-    $("#page_loader").show();
-    $.ajax({
-      url: "/admission/application/save/",
-      type: "POST",
-      dataType: "json",
-      data: formData,
-      contentType: false,
-      processData: false,
-      success: function (data) {
-        $("#update_education_check").val(0);
-        $("#degree_level").removeAttr("disabled");
-        $("#degree_id").removeAttr("disabled");
-        var education_criteria = data["education_criteria"];
-        var preferences_allowed = data["preferences_allowed"];
-        $("#page_loader").hide();
-        if (data["status"] == "noerror") {
-          document.getElementById("add_education_form").reset();
-          $("#preference_allowed").val(data["preferences_allowed"]);
-          $("#education_table_body").empty();
-          $("#education_table").show();
-          for (j = 0; j < data.academic_data.length; j++) {
-            if (data.academic_data[j].specialization.length < 1) {
-              data.academic_data[j].specialization = "--";
-            }
-            update_education_button = data.academic_data[j].state;
-            update_button = `<a role='button' id='education_update' t-att-value='edu.id' data-toggle="modal" data-target="#addeducation" data-whatever="@mdo" type="button" class="btn btn-outline-primary color_scheme_class2 p-1" onclick="update_education(this)">
-                        <i style='color: white;border:None' class="fa-regular fa-pen-to-square"></i>
-                        </a>`;
-
-            if ($("#application_state").val() == "draft") {
-              action = `<div class="row"><div class="col-4 mx-1">${update_button}</div><div class="col-4"><a role='button' style="display: ''" id='education_delete' value='${data.academic_data[j].id}' type="button" class="btn btn-outline-primary color_scheme_class2 p-1" onclick="delete_education(this)"><i style="border:None;color:white; " class="fa-solid fa-trash"></i></a></div>`;
-            } else if (
-              $("#application_state").val() != "draft" &&
-              update_education_button == "waiting"
-            ) {
-              action = `<div class="row"><div class="col-4 mx-1">${update_button}</div><div class="col-4"></div></div>`;
-            } else {
-              action = "";
-            }
-            marks_td = "";
-            $.each(
-              data.academic_data[j].subjects_marks,
-              function (indexInArray, element) {
-                marks_td += `<input type='hidden' id='${element.id}' value='${element.name}' total_marks='${element.total_marks}' obtained_marks='${element.obtained_marks}' />`;
-              }
-            );
-
-            var row = `<tr degree_level='${data.academic_data[j].degree_level}' id='${data.academic_data[j].id}'>
-                        <input type="hidden" id="degree_level_id" value='${data.academic_data[j].degree_level_id}' />
-                        <input type="hidden" id="roll_no_tab" value='${data.academic_data[j].board_roll_no}' />
-                        <input type="hidden" id="degree_name" degree_name='${data.academic_data[j].degree_name}' value='${data.academic_data[j].degree_name_id}' />
-                        <input type="hidden" id="group_specialization_name" group_specialization_name='${data.academic_data[j].specialization}' value='${data.academic_data[j].specialization_id}' />
-                        <input type="hidden" id="board_tab" value='${data.academic_data[j].board}' />
-                        <input type="hidden" id="institute_tab" value='${data.academic_data[j].institue}' />
-                        <input type="hidden" id="tot_marks" value='${data.academic_data[j].total_marks}' />
-                        <input type="hidden" id="obt_marks" value='${data.academic_data[j].obtained_marks}' />
-                        <input type="hidden" id="tot_cgpa" value='${data.academic_data[j].total_cgpa}' />
-                        <input type="hidden" id="obt_cgpa" value='${data.academic_data[j].obtained_cgpa}' />
-                        <input type="hidden" id="percentage_u" value='${data.academic_data[j].percentage}' />
-                        <input type="hidden" id="year_edu" value='${data.academic_data[j].passing_year}' />
-                        <input type="hidden" id="sec_year_roll_no" value='${data.academic_data[j].passing_year}' />
-                        <input type="hidden" id="result_status_update_" value='${data.academic_data[j].state}' />
-                        <td id='subject_marks_td' style='display:none' >${marks_td}</td>
-                        <td class='col-auto'><input type='text' value="${data.academic_data[j].degree_name}" readonly='1' id='degree_val' class='form-control-plaintext col-auto'/></td>
-                        <td class='col-auto'><input type='text' value="${data.academic_data[j].specialization}" readonly='1' class='form-control-plaintext col-auto'/></td>
-                        <td class='col-auto'><input type='text' value="${data.academic_data[j].institue}" readonly='1' class='form-control-plaintext col-auto'/></td>
-                        <td class='col-auto'><input type='text' value="${data.academic_data[j].percentage}" readonly='1' class='form-control-plaintext col-auto'/>
-                        <td class='col-auto'><input type='text' value="${data.academic_data[j].state}" readonly='1' class='form-control-plaintext col-auto'/></td>
-                        <td class='col-auto'><a href='/file/download/${data.academic_data[j].id}/applicant.academic.detail'><i class='fas fa-download'></i></a></td>
-                        <td class='col-auto'>
-                        ${action}</td>
-                        </tr>`;
-            $("#education_table_body").append(row);
-          }
-
-          $("#addeducation").modal("toggle");
-          $("#update_education_check").val(0);
-          $("#degree_level").removeAttr("disabled");
-          $("#degree_id").removeAttr("disabled");
-          if ($("#education_table_body").find("tr").length > 1) {
-            if (education_criteria == "yes") {
-              if ($(".preference_input_no").length != preferences_allowed) {
-                $(".preference_input_no").remove();
-                if (preferences_allowed > 0) {
-                  for (var i = 0; i < preferences_allowed; i++) {
-                    input = `<input  class="form-control preference_input_no" type="text" placeholder='Preference No ${i + 1
-                      }'  />`;
-                    $("#prefer_div").append(input);
-                  }
-                }
-              }
-              prepare_next_step(data);
-            }
-          }
-        } else {
-          $("#addeducation").modal("toggle");
-          $("#update_education_check").val(0);
-          $("#degree_level").removeAttr("disabled");
-          $("#degree_id").removeAttr("disabled");
-          $("#message_popup_text").css({ color: "red" });
-          $("#message_popup_text").text(data["msg"]);
-          $("#toast_body_alert").text(data["msg"]);
-          $("#toast_body_alert").css({ color: "red" });
-          $("#alert_show_button").click();
-        }
-      },
-    });
-  });
-  $("#calculate_olevel").on("submit", function (e) {
-    e.preventDefault();
-    var subject_marks = 0;
-    var count_sub_o = 0;
-    $("#calculate_olevel").find("select option:selected").each(function (index, element) {
-        index = index + 1;
-        if (index < 9) {
-          if ($(element).val() != "") {
-            count_sub_o += 1;
-            subject_marks += parseInt($(element).val());
-          }
-        }
-      });
-    total_marks = 8 * 100;
-    obtained_marks = subject_marks;
-    percentage = ((obtained_marks / total_marks) * 100).toFixed(1);
-    $("#addeducation").find("#total_marks").val(total_marks);
-    $("#addeducation").find("#obtained_marks").val(obtained_marks);
-    $("#addeducation").find("#percentage").val(percentage);
-    $("#addeducation").find("#result_status").val("complete");
-    $("#olevel_calculator").modal("toggle");
-    document.getElementById("calculate_olevel").reset();
-    return false;
-  });
-  $("#calculate_alevel").on("submit", function (e) {
-    e.preventDefault();
-    var subject_marks = 0;
-    var count_sub_a = 0;
-    $("#calculate_alevel").find("select option:selected").each(function (index, element) {
-        index = index + 1;
-        if (index < 4) {
-          if ($(element).val() != "") {
-            count_sub_a += 1;
-            subject_marks += parseInt($(element).val());
-          }
-        }
-      });
-    total_marks = 3 * 100;
-    obtained_marks = subject_marks;
-    percentage = ((obtained_marks / total_marks) * 100).toFixed(1);
-    $("#addeducation").find("#total_marks").val(total_marks);
-    $("#addeducation").find("#obtained_marks").val(obtained_marks);
-    $("#addeducation").find("#percentage").val(percentage);
-    $("#addeducation").find("#result_status").val("complete");
-    $("#alevel_calculator").modal("toggle");
-    document.getElementById("calculate_alevel").reset();
-    return false;
   });
 });
