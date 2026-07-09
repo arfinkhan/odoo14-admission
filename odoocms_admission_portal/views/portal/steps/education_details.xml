@@ -221,7 +221,7 @@ complete and honestly presented by me. Misleading or incorrect information would
 </div>
 <hr/>
 <!-- CGPA vs Marks Radio Toggle -->
-<div class="row" id="cgpa_marks_radio_row">
+<div class="row" id="cgpa_marks_radio_row" style="display:none;">
 <div class="col-12">
 <label style="font-weight:500;margin-right:20px;">
 <input type="radio" name="marks_cgpa" id="marks_radio" value="marks"/> Marks
