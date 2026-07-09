@@ -31,7 +31,7 @@
 </tr>
 </thead>
 <tbody id="education_table_body">
-<t t-foreach="application_id.applicant_academic_ids.sorted(lambda x: x.year)" t-as="edu">
+<t t-foreach="application_id.applicant_academic_ids.sorted(lambda x: x.year or '')" t-as="edu">
 <tr t-att-degree_level="edu.degree_level_id.name" t-att-id="edu.id">
 <input type="hidden" id="degree_level_id" t-att-value="edu.degree_level_id.id"/>
 <input type="hidden" id="roll_no_tab" t-att-value="edu.roll_no"/>
