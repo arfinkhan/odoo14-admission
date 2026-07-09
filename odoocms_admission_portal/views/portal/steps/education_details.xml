@@ -250,11 +250,11 @@ complete and honestly presented by me. Misleading or incorrect information would
 <div class="row" id="cgpa_div_row" >
 <div class="col-lg-4">
 <label id="total_cgpa_label" style="color:black;font-weight:500;">Total CGPA:</label>
-<input class="form-control validate_number" type="number" step="0.01" name="total_cgpa" id="total_cgpa" placeholder="e.g. 4.0"/>
+<input class="form-control" type="number" step="0.01" name="total_cgpa" id="total_cgpa" placeholder="e.g. 4.0"/>
 </div>
 <div class="col-lg-4">
 <label id="obtained_cgpa_label" style="color:black;font-weight:500;">Obtained CGPA:</label>
-<input class="form-control validate_number" type="number" step="0.01" name="obtained_cgpa" id="obtained_cgpa" placeholder="e.g. 3.5"/>
+<input class="form-control" type="number" step="0.01" name="obtained_cgpa" id="obtained_cgpa" placeholder="e.g. 3.5"/>
 </div>
 <div class="col-lg-4">
 <label id="percentage_cgpa_label" style="color:black;font-weight:500;">Percentage (CGPA)</label>
