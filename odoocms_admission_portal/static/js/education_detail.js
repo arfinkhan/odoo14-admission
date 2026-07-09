@@ -244,6 +244,7 @@ $(document).ready(function () {
   $("#degree_level").off("change");
   
   $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
+  $("#cgpa_div_row").hide();  // ← ADD THIS LINE
   if ($("#education_table").find("tbody tr").length < 1) { $("#education_table").hide(); }
   
   $("#result_status").on("change", function () { result_status_change(); });
@@ -351,6 +352,18 @@ $(document).ready(function () {
       error: function () { alert('Submission failed!'); $('#page_loader').hide(); }
     });
   });
+  // Allow only numbers (0-9) and dot in CGPA fields
+$("#total_cgpa, #obtained_cgpa").on('keypress', function(e) {
+    var charCode = e.which || e.keyCode;
+    // Allow: backspace, tab, enter
+    if (charCode == 8 || charCode == 9 || charCode == 13) return true;
+    // Allow: dot (46)
+    if (charCode == 46) return true;
+    // Allow: digits 0-9 (48-57)
+    if (charCode >= 48 && charCode <= 57) return true;
+    return false;
+});
+
   
   // ===== DEGREE CHANGE =====
   $("#degree_id").on("change", function (e) {
