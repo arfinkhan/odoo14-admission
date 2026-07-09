@@ -215,31 +215,36 @@ function add_education_check() {
 // MAIN DOCUMENT READY - WITH ALL FIXES
 // ============================================================
 $(document).ready(function () {
+  // Hide calculator buttons
   $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
-  $("#total_cgpa,#obtained_cgpa,#roll_number_last,#last_year_slip").parent().hide();
-  $("#cgpa_div_row").hide(); // Hide by default via JS (not inline style)
+  $("#cgpa_div_row").hide();
   if ($("#education_table").find("tbody tr").length < 1) { $("#education_table").hide(); }
-  
-  $("#result_status").on("change", function () { result_status_change(); });
   
   // ===== DEGREE LEVEL CHANGE =====
   $("#degree_level").on("change", function (e) {
     val = $(this).val();
-    if ($("#degree_level").val() == "") return false;
+    if (val == "") return false;
+    
+    // Reset and clear
     document.getElementById("add_education_form").reset();
     $("#degree_level").val(val);
     $("#subject_div").empty();
     $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
-    $("#specialization_id").empty();
-    $("#specialization_id").append("<option selected='1' value=''>Select Specializations </option>");
+    
     var code = $("#degree_level option:selected").attr("code").trim().toLowerCase();
+    console.log("Degree code:", code);
     
-    if (code == "ssc" || code == "hssc") { $("#specialization_id").parent().parent().show(); } 
-    else { $("#specialization_id").parent().parent().hide(); }
+    // Clear specialization
+    $("#specialization_id").empty().append("<option selected='1' value=''>Select Specializations</option>");
+    if (code == "ssc" || code == "hssc") { 
+      $("#specialization_id").parent().parent().show(); 
+    } else { 
+      $("#specialization_id").parent().parent().hide(); 
+    }
     
-    degree_level_id = $("#degree_level").val();
+    // Load degrees via AJAX
     var formData = new FormData();
-    formData.append("degree_id", degree_level_id);
+    formData.append("degree_id", val);
     $.ajax({
       url: "/degree/level/degree/",
       type: "POST",
@@ -249,45 +254,41 @@ $(document).ready(function () {
       processData: false,
       success: function (data) {
         if (data.status == "noerror") {
-          $("#degree_id").empty();
-          $("#degree_id").append(" <option selected='1' value='0'>Select Degree </option>");
+          $("#degree_id").empty().append("<option selected='1' value='0'>Select Degree</option>");
           for (j = 0; j < data.degrees.length; j++) {
-            $("#degree_id").append(" <option code=" + data.degrees[j].code + " value=" + data.degrees[j].id + " > " + data.degrees[j].name + "</option>");
+            $("#degree_id").append('<option code="' + data.degrees[j].code + '" value="' + data.degrees[j].id + '">' + data.degrees[j].name + '</option>');
           }
           
-          // ---- SSC ----
+          // ---- SSC (Matric) ----
           if (code == "ssc") {
-            $("#result_status").val("complete");
-            $("#result_status").css({ "pointer-events": "none" });
+            $("#result_status").val("complete").css({ "pointer-events": "none" });
             $("#institute_school_div").show(); $("#institute_college_div").hide(); $("#institute_university_div").hide();
             $("#board").closest('[class*="col-"]').show();
             $("#roll_no").closest('[class*="col-"]').show();
+            // Show ONLY marks - hide CGPA
             $("#cgpa_marks_radio_row").hide();
             $("#marks_div_row").show();
             $("#cgpa_div_row").hide();
           } 
-          // ---- HSSC ----
+          // ---- HSSC (Intermediate) ----
           else if (code == "hssc") {
-            $("#result_status").val(""); $("#result_status").css({ "pointer-events": "" });
+            $("#result_status").val("").css({ "pointer-events": "" });
             $("#institute_school_div").hide(); $("#institute_college_div").show(); $("#institute_university_div").hide();
             $("#board").closest('[class*="col-"]').show();
             $("#roll_no").closest('[class*="col-"]').show();
+            // Show ONLY marks - hide CGPA
             $("#cgpa_marks_radio_row").hide();
             $("#marks_div_row").show();
             $("#cgpa_div_row").hide();
           } 
           // ---- GRADUATE (14/16/18 years) ----
           else if (code == "ug-14" || code == "ug-16" || code == "grad-16" || code == "grad-18") {
-            $("#result_status").val("complete"); $("#result_status").css({ "pointer-events": "none" });
+            $("#result_status").val("complete").css({ "pointer-events": "none" });
             $("#institute_school_div").hide(); $("#institute_college_div").hide(); $("#institute_university_div").show();
-            // Board & Roll No - force visible
             $("#board").closest('[class*="col-"]').show();
             $("#roll_no").closest('[class*="col-"]').show();
-            // Radio - both options visible
+            // Show radio with BOTH options, default to CGPA
             $("#cgpa_marks_radio_row").show();
-            $("label:contains('Marks')").show();
-            $("label:contains('CGPA')").show();
-            // Default to CGPA
             $("input[name='marks_cgpa'][value='cgpa']").prop("checked", true);
             // Show CGPA fields, hide marks fields
             $("#marks_div_row").hide();
@@ -296,7 +297,7 @@ $(document).ready(function () {
           // ---- OTHER ----
           else {
             $("#result_status").css({ "pointer-events": "" });
-            $("#institute_school_div").css('display', ''); $("#institute_college_div").css('display', 'none'); $("#institute_university_div").css('display', 'block');
+            $("#institute_school_div").show(); $("#institute_college_div").hide(); $("#institute_university_div").hide();
             $("#board").closest('[class*="col-"]').show();
             $("#roll_no").closest('[class*="col-"]').show();
             $("#cgpa_marks_radio_row").hide();
@@ -304,12 +305,13 @@ $(document).ready(function () {
             $("#cgpa_div_row").hide();
           }
         }
-      },
+      }
     });
   });
   
   // ===== MARKS/CGPA RADIO TOGGLE =====
-  $("input[name='marks_cgpa']").on("change", function () {
+  // Use event delegation to ensure it works even after DOM changes
+  $(document).on("change", "input[name='marks_cgpa']", function () {
     if ($(this).val() == "marks") {
       $("#marks_div_row").show();
       $("#cgpa_div_row").hide();
@@ -348,7 +350,6 @@ $(document).ready(function () {
       success: function (response) {
         data = JSON.parse(response);
         if (data.status == 'noerror') {
-          document.activeElement.blur();
           $('#addeducation').modal('hide');
           setTimeout(function() { location.reload(); }, 300);
         } else { alert('Error: ' + data.msg); }
@@ -361,7 +362,7 @@ $(document).ready(function () {
   // ===== DEGREE CHANGE =====
   $("#degree_id").on("change", function (e) {
     $("#obtained_marks,#total_marks,#percentage").val("");
-    degree_id = $("#degree_id").val();
+    degree_id = $(this).val();
     degree_name = $("#degree_id option:selected").text().trim();
     if (degree_name.match(/^o-?level$/i)) {
       $("#result_status").parent().hide(); $("#board").parent().parent().hide(); $("#roll_no").parent().parent().hide();
@@ -375,21 +376,6 @@ $(document).ready(function () {
       $("#result_status").parent().show(); $("#board").parent().parent().show(); $("#roll_no").parent().parent().show();
       $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
       $("#obtained_marks,#total_marks").removeAttr("readonly");
-    }
-    if ($("#degree_level option:selected").attr("code").toLowerCase().trim() == "hssc") {
-      var formData = new FormData(); formData.append("degree_id", degree_id);
-      $.ajax({
-        url: "/degree/specializations/", type: "POST", dataType: "json", data: formData, contentType: false, processData: false,
-        success: function (data) {
-          if (data.status == "noerror") {
-            $("#specialization_id").empty();
-            $("#specialization_id").append("<option selected='1' value=''>Select Specializations </option>");
-            for (j = 0; j < data.specializations.length; j++) {
-              $("#specialization_id").append("<option value=" + data.specializations[j].id + ">" + data.specializations[j].name + "</option>");
-            }
-          }
-        },
-      });
     }
   });
 });
