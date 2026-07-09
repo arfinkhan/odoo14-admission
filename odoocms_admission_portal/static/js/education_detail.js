@@ -383,6 +383,11 @@ $("#total_cgpa, #obtained_cgpa").on('keypress', function(e) {
       $("#olevel_calculator_btn,#alevel_calculator_btn").hide();
       $("#obtained_marks,#total_marks").removeAttr("readonly");
     }
+    // RE-APPLY VISIBILITY after degree changes
+    var current_code = $("#degree_level option:selected").attr("code");
+    if (current_code) {
+        apply_education_visibility(current_code.trim().toLowerCase());
+    }
     if ($("#degree_level option:selected").attr("code").toLowerCase().trim() == "hssc") {
       var formData = new FormData(); formData.append("degree_id", degree_id);
       $.ajax({
