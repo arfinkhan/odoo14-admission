@@ -158,5 +158,6 @@
 
     </t>
     <script type="text/javascript" src="/odoocms_admission_portal/static/js/admission_application.js"></script>
+    <script type="text/javascript" src="/odoocms_admission_portal/static/js/education_detail.js"></script>
   </template>
 </odoo>
