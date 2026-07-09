@@ -316,7 +316,7 @@ $(document).ready(function () {
   }, 200);
   
   // ===== AJAX SUBMIT =====
-  $("#add_education_form").on("submit", function (e) {
+  $("#add_education_form").off("submit").on("submit", function (e) {
     e.preventDefault();
     // 🔽 DISABLE BUTTON to prevent double submit
     var $btn = $(this).find('button[type="submit"]');
@@ -356,7 +356,8 @@ $(document).ready(function () {
         data = JSON.parse(response);
         if (data.status == 'noerror') {
           $('#addeducation').modal('hide');
-          setTimeout(function() { location.reload(); }, 300);
+          //setTimeout(function() { location.reload(); }, 300);
+          window.location.href = window.location.pathname + window.location.search;
         } else { alert('Error: ' + data.msg); }
         $('#page_loader').hide();
       },
