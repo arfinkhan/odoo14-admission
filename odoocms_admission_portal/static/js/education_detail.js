@@ -318,6 +318,17 @@ $(document).ready(function () {
   // ===== AJAX SUBMIT =====
   $("#add_education_form").on("submit", function (e) {
     e.preventDefault();
+    // 🔽 DISABLE BUTTON to prevent double submit
+    var $btn = $(this).find('button[type="submit"]');
+    $btn.prop('disabled', true).text('Saving...');
+    // Set hidden fields to 0 to avoid float conversion errors
+    if ($("#cgpa_div_row").is(':hidden')) {
+        $("#total_cgpa, #obtained_cgpa").val("0");
+    }
+    if ($("#marks_div_row").is(':hidden')) {
+        $("#total_marks, #obtained_marks").val("0");
+    }
+
     var val = $("#institute_school").val() || $("#institute_college").val() || $("#institute_university").val() || "";
     $("#institute_hidden").val(val);
     
@@ -364,6 +375,17 @@ $("#total_cgpa, #obtained_cgpa").on('keypress', function(e) {
     return false;
 });
 
+// Auto-calculate CGPA percentage
+$("#total_cgpa, #obtained_cgpa").on('keyup change', function() {
+    var total = parseFloat($("#total_cgpa").val());
+    var obtained = parseFloat($("#obtained_cgpa").val());
+    if (total > 0 && obtained >= 0) {
+        var pct = (obtained / total) * 100;
+        $("#percentage_cgpa_val").val(pct.toFixed(2));
+    } else {
+        $("#percentage_cgpa_val").val("");
+    }
+});
   
   // ===== DEGREE CHANGE =====
   $("#degree_id").on("change", function (e) {
