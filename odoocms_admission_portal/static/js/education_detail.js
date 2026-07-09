@@ -263,11 +263,11 @@ $(document).ready(function () {
     var code = $("#degree_level option:selected").attr("code").trim().toLowerCase();
     
     $("#specialization_id").empty().append("<option selected='1' value=''>Select Specializations</option>");
-    if (code == "ssc" || code == "hssc") { 
+    /*if (code == "ssc" || code == "hssc") { 
       $("#specialization_id").parent().parent().show(); 
     } else { 
       $("#specialization_id").parent().parent().hide(); 
-    }
+    }*/
     
     // Apply visibility immediately
     apply_education_visibility(code);
