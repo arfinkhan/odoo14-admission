@@ -59,6 +59,7 @@ class AdmissionDocuments(models.Model):
     hope_certificate = fields.Image('Hope Certificate View', attachment=True)
     hope_certificate_attachment = fields.Image('Hope Certificate Download', related='hope_certificate') 
     exam_type = fields.Selection([('annual', 'Annual'),('supply', 'Supply'),], string='Exam Type')
+    cgpa_check = fields.Boolean('CGPA Check', default=False)
 
 
     def action_document_verified(self):
